@@ -1,0 +1,17 @@
+[Unit]
+Description=BIOS comes with default OS, non-upgradable
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=<working_dir>
+ExecStart=<working_dir>/rubix-bios -p <port> -d <data_dir> -g <global_dir> -a <artifact_dir> --device-type <device_type> --prod
+Restart=always
+RestartSec=10
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=rubix-bios
+
+[Install]
+WantedBy=multi-user.target
