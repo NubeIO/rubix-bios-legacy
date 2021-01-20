@@ -5,7 +5,7 @@ from src.system.utils.file import read_file
 
 
 class AppSetting:
-    PORT = 1514
+    PORT = 1615
     DATA_DIR_ENV = 'RUBIX_SERVICE_DATA'
     ARTIFACT_DIR_ENV = 'ARTIFACT_DIR'
     GLOBAL_DATA_DIR_ENV = 'GLOBAL_DATA'
