@@ -17,11 +17,17 @@ def delete_existing_folder(dir_) -> bool:
 def download_unzip_service(download_link, directory, token) -> str:
     req = Request(download_link)
     if token:
+        # TODO: make it work with token
         req.add_header("Authorization", "token {}".format(token))
     with urlopen(req) as zip_resp:
         with ZipFile(BytesIO(zip_resp.read())) as z_file:
             z_file.extractall(directory)
             return z_file.namelist()[0]
+
+
+def read_file(file) -> str:
+    with open(file, "r") as f:
+        return f.read()
 
 
 def write_file(file, content):

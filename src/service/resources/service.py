@@ -34,9 +34,9 @@ def download(app_setting: AppSetting, repo_name: str, _version: str):
     download_link: str = _get_download_link(repo_name, _version, app_setting.device_type)
     delete_existing_folder(download_dir)
     try:
-        name: str = download_unzip_service(download_link, download_dir, None)  # todo token
+        name: str = download_unzip_service(download_link, download_dir, app_setting.token)
     except HTTPError as e:
-        raise HTTPError(e.url, e.code, 'download link or token might have error', e.headers, e.fp)
+        raise HTTPError(e.url, e.code, f'download link {download_link} or token might be incorrect', e.headers, e.fp)
     extracted_dir: str = os.path.join(download_dir, name)
     dir_with_version: str = os.path.join(download_dir, _version)
     mode: int = 0o744

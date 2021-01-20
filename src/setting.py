@@ -1,6 +1,8 @@
 import os
 from flask import Flask
 
+from src.system.utils.file import read_file
+
 
 class AppSetting:
     PORT = 1514
@@ -12,6 +14,7 @@ class AppSetting:
     default_global_dir: str = 'out'
     default_data_dir: str = 'rubix-bios'
     default_artifact_dir: str = 'apps'
+    default_token_file = 'token.txt'
 
     def __init__(self, **kwargs):
         self.__global_dir = self.__compute_dir(kwargs.get('global_dir'), self.default_global_dir, 0o777)
@@ -21,6 +24,7 @@ class AppSetting:
                                                  os.path.join(self.data_dir, self.default_artifact_dir))
         self.__download_dir = self.__compute_dir('', os.path.join(self.__artifact_dir, 'download'))
         self.__install_dir = self.__compute_dir('', os.path.join(self.__artifact_dir, 'install'))
+        self.__token_file = os.path.join(self.data_dir, self.default_token_file)
         self.__prod = kwargs.get('prod') or False
         self.__device_type = kwargs.get('device_type')
 
@@ -43,6 +47,10 @@ class AppSetting:
     @property
     def install_dir(self) -> str:
         return self.__install_dir
+
+    @property
+    def token(self) -> str:
+        return read_file(os.path.join(self.data_dir, self.default_token_file))
 
     @property
     def prod(self) -> bool:
