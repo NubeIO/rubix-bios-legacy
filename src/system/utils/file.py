@@ -26,8 +26,11 @@ def download_unzip_service(download_link, directory, token) -> str:
 
 
 def read_file(file) -> str:
-    with open(file, "r") as f:
-        return f.read()
+    try:
+        with open(file, "r") as f:
+            return f.read()
+    except Exception as e:
+        return ""
 
 
 def write_file(file, content):

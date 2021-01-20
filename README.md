@@ -67,3 +67,9 @@ it, then run following command to start from systemd file:
 ```bash
 sudo ./rubix-bios --uninstall
 ```
+
+### Upgrade Rubix Service
+
+```bash
+curl http://localhost:1514/api/service/upgrade
+```
