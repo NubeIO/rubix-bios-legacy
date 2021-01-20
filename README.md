@@ -60,10 +60,19 @@ it, then run following command to start from systemd file:
     ```bash
     sudo ./rubix-bios -p 1514 -d /data/rubix-bios -g /data -a /data/rubix-bios/apps --prod --install
     ```
-    
+- To Run on Ubuntu: 
+    ```bash
+    sudo ./rubix-bios -p 1514 -d /data/rubix-bios -g /data -a /data/rubix-bios/apps --prod --install --device-type amd64
+    ```    
 
 ### How To Uninstall:
 
 ```bash
 sudo ./rubix-bios --uninstall
+```
+
+### Upgrade Rubix Service
+
+```bash
+curl http://localhost:1514/api/service/upgrade
 ```
