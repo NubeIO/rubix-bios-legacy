@@ -20,7 +20,7 @@ BIOS comes with default OS, non-upgradable
 - Build local binary
 
     ```bash
-    poetry run pyinstaller run.py -n rubix-bios --clean --onefile --add-data systemd:systemd
+    poetry run pyinstaller run.py -n rubix-bios --clean --onefile --add-data VERSION:. --add-data systemd:systemd
     ```
 
   The output is: `dist/rubix-bios`
