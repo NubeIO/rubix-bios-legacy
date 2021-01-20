@@ -11,6 +11,7 @@ Flask = "^1.1.2"
 Flask-RESTful = "^0.3.8"
 Flask-Cors = "^3.0.9"
 click = "^7.1.2"
+packaging = "^20.8"
 
 [tool.poetry.dev-dependencies]
 pyinstaller = "^4.1"

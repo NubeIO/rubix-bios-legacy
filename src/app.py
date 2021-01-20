@@ -15,8 +15,8 @@ def create_app(app_setting: AppSetting) -> Flask:
     cors.init_app(app)
 
     def register_router(_app) -> Flask:
-        from src.routes import bp_bios, bp_system
-        _app.register_blueprint(bp_bios)
+        from src.routes import bp_service, bp_system
+        _app.register_blueprint(bp_service)
         _app.register_blueprint(bp_system)
         return _app
 

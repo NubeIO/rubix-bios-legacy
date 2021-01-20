@@ -49,7 +49,7 @@ class AppSetting:
         return self.__prod
 
     @property
-    def device_type(self) -> bool:
+    def device_type(self) -> str:
         return self.__device_type
 
     def init_app(self, app: Flask):
