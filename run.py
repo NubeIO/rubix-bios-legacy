@@ -5,6 +5,7 @@ import os
 import click
 
 from src.app import create_app
+from src.service.systemd import RubixBiosSystemd
 from src.setting import AppSetting
 
 CLI_CTX_SETTINGS = dict(help_option_names=["-h", "--help"], max_content_width=120)
@@ -28,9 +29,11 @@ def cli(port, data_dir, global_dir, artifact_dir, prod, device_type, install, un
                          device_type=device_type)
 
     if install:
-        pass
+        systemd = RubixBiosSystemd(os.getcwd(), setting.device_type)
+        systemd.install()
     elif uninstall:
-        pass
+        systemd = RubixBiosSystemd()
+        systemd.uninstall()
     else:
         app = create_app(setting)
         app.run(host='0.0.0.0', port=port)

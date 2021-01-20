@@ -71,12 +71,44 @@ class Systemd(ABC):
         raise NotImplementedError('Need to be implemented')
 
 
+class RubixBiosSystemd(Systemd):
+    SERVICE_FILE_NAME = 'nubeio-rubix-bios.service'
+
+    def __init__(self, wd=None, device_type=None):
+        self.__wd = wd
+        self.__device_type = device_type
+        self.__port = 1514
+        self.__data_dir = '/data/rubix-bios'
+        self.__global_dir = '/data'
+        self.__artifact_dir = '/data/rubix-bios/apps'
+        super().__init__(RubixBiosSystemd.SERVICE_FILE_NAME)
+
+    # noinspection DuplicatedCode
+    def create_service(self):
+        lines = []
+        with open(resource_path('systemd/nubeio-rubix-bios.service')) as systemd_file:
+            for line in systemd_file.readlines():
+                if '<working_dir>' in line and self.__wd:
+                    line = line.replace('<working_dir>', self.__wd)
+                if '<port>' in line and self.__port:
+                    line = line.replace('<port>', str(self.__port))
+                if '<data_dir>' in line and self.__data_dir:
+                    line = line.replace('<data_dir>', self.__data_dir)
+                if '<global_dir>' in line and self.__global_dir:
+                    line = line.replace('<global_dir>', self.__global_dir)
+                if '<artifact_dir>' in line and self.__artifact_dir:
+                    line = line.replace('<artifact_dir>', self.__artifact_dir)
+                if '<device_type>' in line and self.__device_type:
+                    line = line.replace('<device_type>', self.__device_type)
+                lines.append(line)
+        return lines
+
+
 class RubixServiceSystemd(Systemd):
     SERVICE_FILE_NAME = 'nubeio-rubix-service.service'
 
-    def __init__(self, wd=None, token=None, device_type=None):
+    def __init__(self, wd=None, device_type=None):
         self.__wd = wd
-        self.__token = token
         self.__device_type = device_type
         self.__port = 1515
         self.__data_dir = '/data/rubix-service'
@@ -84,6 +116,7 @@ class RubixServiceSystemd(Systemd):
         self.__artifact_dir = '/data/rubix-service/apps'
         super().__init__(RubixServiceSystemd.SERVICE_FILE_NAME)
 
+    # noinspection DuplicatedCode
     def create_service(self):
         lines = []
         with open(resource_path('systemd/nubeio-rubix-service.service')) as systemd_file:
@@ -98,9 +131,6 @@ class RubixServiceSystemd(Systemd):
                     line = line.replace('<global_dir>', self.__global_dir)
                 if '<artifact_dir>' in line and self.__artifact_dir:
                     line = line.replace('<artifact_dir>', self.__artifact_dir)
-                if ' --token <token>' in line:
-                    token = self.__token
-                    line = line.replace(' --token <token>', '' if not token else ' --token {}'.format(token))
                 if '<device_type>' in line and self.__device_type:
                     line = line.replace('<device_type>', self.__device_type)
                 lines.append(line)

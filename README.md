@@ -25,13 +25,6 @@ BIOS comes with default OS, non-upgradable
 
   The output is: `dist/rubix-bios`
 
-### Run
-
-```bash
-docker create volume rubix-bios-data
-docker run --rm -it -p 1514:1514 -v rubix-bios-data:/data --name rubix-bios rubix-bios:dev
-```
-
 ## Deploy on Production
 
 - Download release artifact
@@ -65,7 +58,7 @@ it, then run following command to start from systemd file:
     ```
 - To Run on BBB & Pi: 
     ```bash
-    sudo ./rubix-bios -p 1616 -d /data/rubix-bios -g /data -a /data/rubix-bios/apps --prod --install
+    sudo ./rubix-bios -p 1514 -d /data/rubix-bios -g /data -a /data/rubix-bios/apps --prod --install
     ```
     
 

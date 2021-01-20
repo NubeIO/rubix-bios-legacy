@@ -19,18 +19,19 @@ class UpgradeResource(Resource):
         app_setting: AppSetting = current_app.config[AppSetting.FLASK_KEY]
         try:
             repo_name: str = 'rubix-service'
-            _version: str = get_latest_release(get_release_link(repo_name))
+            _version: str = _get_latest_release(_get_release_link(repo_name))
             download(app_setting, repo_name, _version)
+            installation = install(app_setting, repo_name, _version)
             return {
-                'installation': install(app_setting, repo_name, _version)
+                'installation': installation
             }
         except Exception as e:
             abort(501, message=str(e))
 
 
 def download(app_setting: AppSetting, repo_name: str, _version: str):
-    download_dir = get_download_dir(app_setting, repo_name)
-    download_link: str = get_download_link(repo_name, _version, app_setting.device_type)
+    download_dir = _get_download_dir(app_setting, repo_name)
+    download_link: str = _get_download_link(repo_name, _version, app_setting.device_type)
     delete_existing_folder(download_dir)
     try:
         name: str = download_unzip_service(download_link, download_dir, None)  # todo token
@@ -46,19 +47,19 @@ def download(app_setting: AppSetting, repo_name: str, _version: str):
 
 
 def install(app_setting: AppSetting, repo_name: str, _version: str) -> bool:
-    installation_dir: str = get_installation_dir(app_setting, repo_name)
-    download_dir: str = get_download_dir(app_setting, repo_name)
-    downloaded_dir: str = get_downloaded_dir(download_dir, _version)
-    installed_dir: str = get_installed_dir(installation_dir, _version)
+    installation_dir: str = _get_installation_dir(app_setting, repo_name)
+    download_dir: str = _get_download_dir(app_setting, repo_name)
+    downloaded_dir: str = _get_downloaded_dir(download_dir, _version)
+    installed_dir: str = _get_installed_dir(installation_dir, _version)
     delete_existing_folder(installation_dir)
     shutil.copytree(downloaded_dir, installed_dir)
-    systemd: Systemd = RubixServiceSystemd(installed_dir, None, app_setting.device_type)  # todo token
+    systemd: Systemd = RubixServiceSystemd(installed_dir, app_setting.device_type)
     installation = systemd.install()
-    delete_existing_folder(get_download_dir)
+    delete_existing_folder(downloaded_dir)
     return installation
 
 
-def get_latest_release(releases_link: str):
+def _get_latest_release(releases_link: str):
     resp = requests.get(releases_link)
     data = json.loads(resp.content)
     latest_release = ''
@@ -69,7 +70,7 @@ def get_latest_release(releases_link: str):
     return latest_release
 
 
-def get_download_link(repo_name: str, _version: str, device_type: str) -> str:
+def _get_download_link(repo_name: str, _version: str, device_type: str) -> str:
     release_link = 'https://api.github.com/repos/NubeIO/{}/releases/tags/{}'.format(repo_name, _version)
     resp = requests.get(release_link)
     row = json.loads(resp.content)
@@ -79,21 +80,21 @@ def get_download_link(repo_name: str, _version: str, device_type: str) -> str:
     raise ModuleNotFoundError('No app for type {} & version {}'.format(device_type, _version))
 
 
-def get_release_link(repo_name: str) -> str:
+def _get_release_link(repo_name: str) -> str:
     return 'https://api.github.com/repos/NubeIO/{}/releases'.format(repo_name)
 
 
-def get_download_dir(app_setting: AppSetting, repo_name: str) -> str:
+def _get_download_dir(app_setting: AppSetting, repo_name: str) -> str:
     return os.path.join(app_setting.download_dir, repo_name)
 
 
-def get_installation_dir(app_setting: AppSetting, repo_name: str) -> str:
+def _get_installation_dir(app_setting: AppSetting, repo_name: str) -> str:
     return os.path.join(app_setting.install_dir, repo_name)
 
 
-def get_downloaded_dir(download_dir: str, _version: str) -> str:
+def _get_downloaded_dir(download_dir: str, _version: str) -> str:
     return os.path.join(download_dir, _version)
 
 
-def get_installed_dir(installation_dir: str, _version: str) -> str:
+def _get_installed_dir(installation_dir: str, _version: str) -> str:
     return os.path.join(installation_dir, _version)
