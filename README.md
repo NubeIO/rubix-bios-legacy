@@ -35,7 +35,7 @@ BIOS comes with default OS, non-upgradable
 Usage: run.py [OPTIONS]
 
 Options:
-  -p, --port INTEGER              Port  [default: 1514]
+  -p, --port INTEGER              Port  [default: 1615]
   -d, --data-dir PATH             Application data dir
   -g, --global-dir PATH           Global data dir
   -a, --artifact-dir PATH         Artifact downloaded dir
@@ -58,12 +58,21 @@ it, then run following command to start from systemd file:
     ```
 - To Run on BBB & Pi: 
     ```bash
-    sudo ./rubix-bios -p 1514 -d /data/rubix-bios -g /data -a /data/rubix-bios/apps --prod --install
+    sudo ./rubix-bios -p 1615 -d /data/rubix-bios -g /data -a /data/rubix-bios/apps --prod --install
     ```
-    
+- To Run on Ubuntu: 
+    ```bash
+    sudo ./rubix-bios -p 1615 -d /data/rubix-bios -g /data -a /data/rubix-bios/apps --prod --install --device-type amd64
+    ```    
 
 ### How To Uninstall:
 
 ```bash
 sudo ./rubix-bios --uninstall
+```
+
+### Upgrade Rubix Service
+
+```bash
+curl http://localhost:1615/api/service/upgrade
 ```

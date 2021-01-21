@@ -77,7 +77,7 @@ class RubixBiosSystemd(Systemd):
     def __init__(self, wd=None, device_type=None):
         self.__wd = wd
         self.__device_type = device_type
-        self.__port = 1514
+        self.__port = 1615
         self.__data_dir = '/data/rubix-bios'
         self.__global_dir = '/data'
         self.__artifact_dir = '/data/rubix-bios/apps'
@@ -110,7 +110,7 @@ class RubixServiceSystemd(Systemd):
     def __init__(self, wd=None, device_type=None):
         self.__wd = wd
         self.__device_type = device_type
-        self.__port = 1515
+        self.__port = 1616
         self.__data_dir = '/data/rubix-service'
         self.__global_dir = '/data'
         self.__artifact_dir = '/data/rubix-service/apps'
