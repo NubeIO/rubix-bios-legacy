@@ -76,3 +76,10 @@ sudo ./rubix-bios --uninstall
 ```bash
 curl http://localhost:1615/api/service/upgrade
 ```
+
+
+### Update Token if your Rubix Service repo is private
+
+```bash
+curl -X PUT http://localhost:1615/api/service/token -H "Content-Type: application/json" -d '{"token": <TOKEN>|null}'
+```

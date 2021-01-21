@@ -1,7 +1,8 @@
 import json
 import os
 import shutil
-from urllib.error import HTTPError
+from io import BytesIO
+from zipfile import ZipFile
 
 import requests
 from flask import current_app
@@ -10,7 +11,7 @@ from packaging import version
 
 from src.service.systemd import RubixServiceSystemd, Systemd
 from src.setting import AppSetting
-from src.system.utils.file import download_unzip_service, delete_existing_folder
+from src.system.utils.file import delete_existing_folder
 
 
 class UpgradeResource(Resource):
@@ -19,8 +20,9 @@ class UpgradeResource(Resource):
         app_setting: AppSetting = current_app.config[AppSetting.FLASK_KEY]
         try:
             repo_name: str = 'rubix-service'
-            _version: str = _get_latest_release(_get_release_link(repo_name))
-            download(app_setting, repo_name, _version)
+            token: str = app_setting.token
+            _version: str = _get_latest_release(_get_release_link(repo_name), token)
+            download(app_setting, repo_name, _version, token)
             installation = install(app_setting, repo_name, _version)
             return {
                 'installation': installation
@@ -29,14 +31,14 @@ class UpgradeResource(Resource):
             abort(501, message=str(e))
 
 
-def download(app_setting: AppSetting, repo_name: str, _version: str):
+def download(app_setting: AppSetting, repo_name: str, _version: str, token: str):
     download_dir = _get_download_dir(app_setting, repo_name)
-    download_link: str = _get_download_link(repo_name, _version, app_setting.device_type)
+    download_link: str = _get_download_link(repo_name, _version, app_setting.device_type, token)
     delete_existing_folder(download_dir)
     try:
-        name: str = download_unzip_service(download_link, download_dir, app_setting.token)
-    except HTTPError as e:
-        raise HTTPError(e.url, e.code, f'download link {download_link} or token might be incorrect', e.headers, e.fp)
+        name: str = _download_unzip_service(download_link, download_dir, app_setting.token)
+    except Exception:
+        raise ModuleNotFoundError(f'download link {download_link} or token might be incorrect')
     extracted_dir: str = os.path.join(download_dir, name)
     dir_with_version: str = os.path.join(download_dir, _version)
     mode: int = 0o744
@@ -59,25 +61,43 @@ def install(app_setting: AppSetting, repo_name: str, _version: str) -> bool:
     return installation
 
 
-def _get_latest_release(releases_link: str):
-    resp = requests.get(releases_link)
+def _get_latest_release(releases_link: str, token: str):
+    headers = {}
+    if token:
+        headers['Authorization'] = f'Bearer {token}'
+    resp = requests.get(releases_link, headers=headers)
     data = json.loads(resp.content)
     latest_release = ''
     for row in data:
-        release = row.get('tag_name')
+        release = row.get('tag_name', '') if type(row) is dict else ''
         if not latest_release or version.parse(latest_release) <= version.parse(release):
             latest_release = release
+    if not latest_release:
+        raise ModuleNotFoundError('No version found, check your token & repo')
     return latest_release
 
 
-def _get_download_link(repo_name: str, _version: str, device_type: str) -> str:
+def _get_download_link(repo_name: str, _version: str, device_type: str, token: str) -> str:
     release_link = 'https://api.github.com/repos/NubeIO/{}/releases/tags/{}'.format(repo_name, _version)
-    resp = requests.get(release_link)
+    headers = {}
+    if token:
+        headers['Authorization'] = f'Bearer {token}'
+    resp = requests.get(release_link, headers=headers)
     row = json.loads(resp.content)
     for asset in row.get('assets', []):
-        if device_type in asset.get('browser_download_url'):
-            return asset.get('browser_download_url')
-    raise ModuleNotFoundError('No app for type {} & version {}'.format(device_type, _version))
+        if device_type in asset.get('name'):
+            return asset.get('url')
+    raise ModuleNotFoundError('No app for type {} & version {}, check your token & repo'.format(device_type, _version))
+
+
+def _download_unzip_service(download_link, directory, token) -> str:
+    headers = {"Accept": "application/octet-stream"}
+    if token:
+        headers['Authorization'] = f'Bearer {token}'
+    r = requests.get(download_link, headers=headers)
+    with ZipFile(BytesIO(r.content)) as z_file:
+        z_file.extractall(directory)
+    return z_file.namelist()[0]
 
 
 def _get_release_link(repo_name: str) -> str:

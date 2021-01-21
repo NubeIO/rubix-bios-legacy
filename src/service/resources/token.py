@@ -16,10 +16,10 @@ class TokenResource(Resource):
         token_file = os.path.join(data_dir, AppSetting.default_token_file)
 
         parser = reqparse.RequestParser()
-        parser.add_argument('token', type=str, required=True)
+        parser.add_argument('token', type=str)
         args = parser.parse_args()
         token = args['token']
-        write_file(token_file, token)
+        write_file(token_file, '' if not token else token)
         return {
             'token': token
         }
