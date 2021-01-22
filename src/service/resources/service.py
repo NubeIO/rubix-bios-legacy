@@ -6,7 +6,7 @@ from zipfile import ZipFile
 
 import requests
 from flask import current_app
-from flask_restful import Resource, abort
+from flask_restful import Resource, abort, reqparse
 from packaging import version
 
 from src.service.systemd import RubixServiceSystemd, Systemd
@@ -16,12 +16,18 @@ from src.system.utils.file import delete_existing_folder
 
 class UpgradeResource(Resource):
     @classmethod
-    def get(cls):
+    def put(cls):
+        parser = reqparse.RequestParser()
+        parser.add_argument('version', type=str, required=True)
+        args = parser.parse_args()
+        _version = args['version']
         app_setting: AppSetting = current_app.config[AppSetting.FLASK_KEY]
         try:
             repo_name: str = 'rubix-service'
             token: str = app_setting.token
-            _version: str = _get_latest_release(_get_release_link(repo_name), token)
+            if _version == "latest":
+                _version = _get_latest_release(_get_release_link(repo_name), token)
+
             download(app_setting, repo_name, _version, token)
             installation = install(app_setting, repo_name, _version)
             return {
