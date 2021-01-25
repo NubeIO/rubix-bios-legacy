@@ -81,7 +81,7 @@ curl http://localhost:1615/api/service/releases
 ### Upgrade Rubix Service
 
 ```bash
-curl http://localhost:1615/api/service/upgrade -H "Content-Type: application/json" -d '{"version": latest|<version>}
+curl -X PUT http://localhost:1615/api/service/upgrade -H "Content-Type: application/json" -d '{"version": latest|<version>}
 ```
 
 

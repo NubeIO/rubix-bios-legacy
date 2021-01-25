@@ -13,6 +13,8 @@ from src.service.systemd import RubixServiceSystemd, Systemd
 from src.setting import AppSetting
 from src.system.utils.file import delete_existing_folder
 
+REPO_NAME: str = 'rubix-service'
+
 
 class UpgradeResource(Resource):
     @classmethod
@@ -23,16 +25,25 @@ class UpgradeResource(Resource):
         _version = args['version']
         app_setting: AppSetting = current_app.config[AppSetting.FLASK_KEY]
         try:
-            repo_name: str = 'rubix-service'
             token: str = app_setting.token
             if _version == "latest":
-                _version = _get_latest_release(_get_release_link(repo_name), token)
+                _version = _get_latest_release(_get_release_link(REPO_NAME), token)
 
-            download(app_setting, repo_name, _version, token)
-            installation = install(app_setting, repo_name, _version)
+            download(app_setting, REPO_NAME, _version, token)
+            installation = install(app_setting, REPO_NAME, _version)
             return {
                 'installation': installation
             }
+        except Exception as e:
+            abort(501, message=str(e))
+
+
+class ReleaseResource(Resource):
+    @classmethod
+    def get(cls):
+        try:
+            app_setting: AppSetting = current_app.config[AppSetting.FLASK_KEY]
+            return _get_releases(_get_release_link(REPO_NAME), app_setting.token)
         except Exception as e:
             abort(501, message=str(e))
 
@@ -81,6 +92,18 @@ def _get_latest_release(releases_link: str, token: str):
     if not latest_release:
         raise ModuleNotFoundError('No version found, check your token & repo')
     return latest_release
+
+
+def _get_releases(releases_link: str, token: str):
+    headers = {}
+    if token:
+        headers['Authorization'] = f'Bearer {token}'
+    resp = requests.get(releases_link, headers=headers)
+    data = json.loads(resp.content)
+    releases = []
+    for row in data:
+        releases.append(row.get('tag_name'))
+    return releases
 
 
 def _get_download_link(repo_name: str, _version: str, device_type: str, token: str) -> str:

@@ -1,8 +1,7 @@
 from flask import Blueprint
 from flask_restful import Api
 
-from src.service.resources.release import ReleaseResource
-from src.service.resources.service import UpgradeResource
+from src.service.resources.service import UpgradeResource, ReleaseResource
 from src.service.resources.token import TokenResource
 from src.system.resources.ping import Ping
 
