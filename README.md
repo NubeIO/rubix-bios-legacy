@@ -78,6 +78,13 @@ curl http://localhost:1615/api/service/releases
 ```
 
 
+### Update check Rubix Service
+
+```bash
+curl http://localhost:1615/api/service/update_check
+```
+
+
 ### Upgrade Rubix Service
 
 ```bash
