@@ -11,7 +11,7 @@ from packaging import version
 
 from src.service.systemd import RubixServiceSystemd, Systemd
 from src.setting import AppSetting
-from src.system.utils.file import delete_existing_folder
+from src.system.utils.file import delete_existing_folder, get_extracted_dir
 
 REPO_NAME: str = 'rubix-service'
 
@@ -44,6 +44,23 @@ class ReleaseResource(Resource):
         try:
             app_setting: AppSetting = current_app.config[AppSetting.FLASK_KEY]
             return _get_releases(_get_release_link(REPO_NAME), app_setting.token)
+        except Exception as e:
+            abort(501, message=str(e))
+
+
+class UpdateCheckResource(Resource):
+    @classmethod
+    def get(cls):
+        app_setting: AppSetting = current_app.config[AppSetting.FLASK_KEY]
+        try:
+            token: str = app_setting.token
+            latest_version: str = _get_latest_release(_get_release_link(REPO_NAME), token)
+            installed_version: str = get_extracted_dir(_get_installation_dir(app_setting, REPO_NAME)).split("/")[-1]
+            return {
+                'latest_version': latest_version,
+                'installed_version': installed_version,
+                'update_required': latest_version != installed_version
+            }
         except Exception as e:
             abort(501, message=str(e))
 

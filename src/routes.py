@@ -1,9 +1,8 @@
 from flask import Blueprint
 from flask_restful import Api
 
-from src.service.resources.service import UpgradeResource, ReleaseResource
+from src.service.resources.service import UpgradeResource, ReleaseResource, UpdateCheckResource
 from src.service.resources.token import TokenResource
-from src.service.resources.update_check import UpdateCheckResource
 from src.system.resources.ping import Ping
 
 bp_service = Blueprint('service', __name__, url_prefix='/api/service')
