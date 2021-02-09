@@ -42,6 +42,7 @@ Options:
   --prod                          Production mode
   --device-type [amd64|arm64|armv7]
                                   Device type  [default: armv7]
+  --auth                          Enable JWT authentication
   --install                       Install rubix-bios
   --uninstall                     Uninstall rubix-bios
   -h, --help                      Show this message and exit.
@@ -56,14 +57,26 @@ it, then run following command to start from systemd file:
     ```bash
     sudo ./rubix-bios -p <port> -d <data_dir> -g <global_dir> -a <artifact_dir> --device-type <device_type> --prod --install
     ```
+- Template2 (With JWT authorization): 
+  ```bash
+  sudo ./rubix-bios -p <port> -d <data_dir> -g <global_dir> -a <artifact_dir> --device-type <device_type> --prod --install --auth
+  ```
 - To Run on BBB & Pi: 
     ```bash
     sudo ./rubix-bios -p 1615 -d /data/rubix-bios -g /data -a /data/rubix-bios/apps --prod --install
     ```
+- To Run on BBB & Pi with auth restriction: 
+    ```bash
+    sudo ./rubix-bios -p 1615 -d /data/rubix-bios -g /data -a /data/rubix-bios/apps --prod --install --auth
+    ```  
 - To Run on Ubuntu: 
     ```bash
     sudo ./rubix-bios -p 1615 -d /data/rubix-bios -g /data -a /data/rubix-bios/apps --prod --install --device-type amd64
     ```    
+- To Run on Ubuntu with auth restriction: 
+    ```bash
+    sudo ./rubix-bios -p 1615 -d /data/rubix-bios -g /data -a /data/rubix-bios/apps --prod --install --auth --device-type amd64
+    ```   
 
 ### How To Uninstall:
 
@@ -71,6 +84,18 @@ it, then run following command to start from systemd file:
 sudo ./rubix-bios --uninstall
 ```
 
+### Authentication
+
+> POST: `/api/users/login`
+> Body
+```json
+{
+    "username": "<username>",
+    "password": "<password>"
+}
+```
+
+> Use that `access_token` on header of each request
 
 ### Get Rubix Service releases
 ```bash
