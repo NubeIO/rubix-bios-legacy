@@ -1,7 +1,9 @@
 import os
+import secrets
+
 from flask import Flask
 
-from src.system.utils.file import read_file
+from src.system.utils.file import read_file, write_file
 
 
 class AppSetting:
@@ -15,6 +17,8 @@ class AppSetting:
     default_data_dir: str = 'rubix-bios'
     default_artifact_dir: str = 'apps'
     default_token_file = 'token.txt'
+    default_secret_key_file = 'secret_key.txt'
+    default_users_file = 'users.txt'
 
     def __init__(self, **kwargs):
         self.__global_dir = self.__compute_dir(kwargs.get('global_dir'), self.default_global_dir, 0o777)
@@ -27,6 +31,10 @@ class AppSetting:
         self.__token_file = os.path.join(self.data_dir, self.default_token_file)
         self.__prod = kwargs.get('prod') or False
         self.__device_type = kwargs.get('device_type')
+        self.__secret_key = ''
+        self.__secret_key_file = os.path.join(self.data_dir, self.default_secret_key_file)
+        self.__users_file = os.path.join(self.data_dir, self.default_users_file)
+        self.__auth = kwargs.get('auth') or False
 
     @property
     def global_dir(self):
@@ -60,7 +68,20 @@ class AppSetting:
     def device_type(self) -> str:
         return self.__device_type
 
+    @property
+    def secret_key(self) -> str:
+        return self.__secret_key
+
+    @property
+    def auth(self) -> bool:
+        return self.__auth
+
+    @property
+    def users_file(self) -> str:
+        return self.__users_file
+
     def init_app(self, app: Flask):
+        self.__secret_key = AppSetting.__handle_secret_key(self.__secret_key_file)
         app.config[AppSetting.FLASK_KEY] = self
         return self
 
@@ -70,3 +91,18 @@ class AppSetting:
         d = d if os.path.isabs(d) else os.path.join(os.getcwd(), d)
         os.makedirs(d, mode, True)
         return d
+
+    @staticmethod
+    def __handle_secret_key(secret_key_file) -> str:
+        if AppSetting.auth:
+            existing_secret_key = read_file(secret_key_file)
+            if existing_secret_key.strip():
+                return existing_secret_key
+            secret_key = AppSetting.__create_secret_key()
+            write_file(secret_key_file, secret_key)
+            return secret_key
+        return ''
+
+    @staticmethod
+    def __create_secret_key():
+        return secrets.token_hex(24)
