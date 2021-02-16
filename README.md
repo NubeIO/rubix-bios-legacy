@@ -78,6 +78,8 @@ it, then run following command to start from systemd file:
     sudo ./rubix-bios -p 1615 -d /data/rubix-bios -g /data -a /data/rubix-bios/apps --prod --install --auth --device-type amd64
     ```   
 
+_**Note:** if bios installed with --auth, services will also open with same auth protection_
+
 ### How To Uninstall:
 
 ```bash

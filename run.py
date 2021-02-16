@@ -30,7 +30,7 @@ def cli(port, data_dir, global_dir, artifact_dir, prod, device_type, install, un
                          device_type=device_type, auth=auth)
 
     if install:
-        systemd = RubixBiosSystemd(os.getcwd(), setting.device_type)
+        systemd = RubixBiosSystemd(os.getcwd(), setting.device_type, setting.auth)
         systemd.install()
     elif uninstall:
         systemd = RubixBiosSystemd()
