@@ -1,4 +1,5 @@
 import datetime
+from typing import Dict
 
 import jwt
 from flask import current_app, request
@@ -14,26 +15,28 @@ class UserModel:
     def create_user(cls, username='admin', password='admin'):
         app_setting = current_app.config[AppSetting.FLASK_KEY]
         existing_users = read_file(app_setting.users_file).split()
-        if not len(existing_users) < 2:
+        if not existing_users:
             UserModel.update_user(username, password)
 
     @classmethod
     def update_user(cls, username, password):
+        if not username.isalnum():
+            raise ValueError('Username can only contain alpha numeric characters')
         app_setting = current_app.config[AppSetting.FLASK_KEY]
         hashed_password = generate_password_hash(password, method='sha256')
-        default_user = f'{username}\n{hashed_password}'
+        default_user = f'{username}:{hashed_password}'
         write_file(app_setting.users_file, default_user)
 
     @classmethod
-    def get_user(cls):
+    def get_user(cls) -> Dict:
         app_setting = current_app.config[AppSetting.FLASK_KEY]
-        user = read_file(app_setting.users_file).split()
+        user = read_file(app_setting.users_file).split(":")
         if len(user) >= 2:
             return {
                 'username': user[0],
                 'password': user[1]
             }
-        return None
+        return {}
 
     @staticmethod
     def encode_jwt_token(username):
