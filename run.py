@@ -24,7 +24,7 @@ CLI_CTX_SETTINGS = dict(help_option_names=["-h", "--help"], max_content_width=12
               help='Device type')
 @click.option('--install', is_flag=True, help='Install rubix-bios')
 @click.option('--uninstall', is_flag=True, help='Uninstall rubix-bios')
-@click.option('--auth', is_flag=True, help='Enable JWT authentication.')
+@click.option('--auth', is_flag=True, help='Enable JWT authentication')
 def cli(port, data_dir, global_dir, artifact_dir, prod, device_type, install, uninstall, auth):
     setting = AppSetting(global_dir=global_dir, data_dir=data_dir, artifact_dir=artifact_dir, prod=prod,
                          device_type=device_type, auth=auth)

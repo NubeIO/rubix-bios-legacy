@@ -42,7 +42,7 @@ class UserModel:
     def encode_jwt_token(username):
         app_setting = current_app.config[AppSetting.FLASK_KEY]
         payload = {
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(days=1, hours=0, seconds=0),
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(days=30, hours=0, seconds=0),
             'iat': datetime.datetime.utcnow(),
             'sub': username
         }

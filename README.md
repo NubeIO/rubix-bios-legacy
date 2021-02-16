@@ -42,9 +42,9 @@ Options:
   --prod                          Production mode
   --device-type [amd64|arm64|armv7]
                                   Device type  [default: armv7]
-  --auth                          Enable JWT authentication
   --install                       Install rubix-bios
   --uninstall                     Uninstall rubix-bios
+  --auth                          Enable JWT authentication
   -h, --help                      Show this message and exit.
 ```
 
