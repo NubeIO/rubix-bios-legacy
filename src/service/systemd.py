@@ -101,9 +101,9 @@ class RubixBiosSystemd(Systemd):
                     line = line.replace('<artifact_dir>', self.__artifact_dir)
                 if '<device_type>' in line and self.__device_type:
                     line = line.replace('<device_type>', self.__device_type)
-                if '--auth' in line and not self.__auth:
-                    line = line.replace('--auth', '')
-                lines.append(line.strip())
+                if ' --auth' in line and not self.__auth:
+                    line = line.replace(' --auth', '')
+                lines.append(line)
         return lines
 
 
@@ -137,7 +137,7 @@ class RubixServiceSystemd(Systemd):
                     line = line.replace('<artifact_dir>', self.__artifact_dir)
                 if '<device_type>' in line and self.__device_type:
                     line = line.replace('<device_type>', self.__device_type)
-                if '--auth' in line and not self.__auth:
-                    line = line.replace('--auth', '')
-                lines.append(line.strip())
+                if ' --auth' in line and not self.__auth:
+                    line = line.replace(' --auth', '')
+                lines.append(line)
         return lines
