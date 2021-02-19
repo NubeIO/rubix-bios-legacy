@@ -1,4 +1,5 @@
 import datetime
+import re
 from typing import Dict
 
 import jwt
@@ -20,8 +21,8 @@ class UserModel:
 
     @classmethod
     def update_user(cls, username, password):
-        if not username.isalnum():
-            raise ValueError('Username can only contain alpha numeric characters')
+        if not re.match("^([A-Za-z0-9_-])+$", username):
+            raise ValueError("username should be alphanumeric and can contain '_', '-'")
         app_setting = current_app.config[AppSetting.FLASK_KEY]
         hashed_password = generate_password_hash(password, method='sha256')
         default_user = f'{username}:{hashed_password}'
