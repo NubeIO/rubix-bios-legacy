@@ -74,13 +74,14 @@ class Systemd(ABC):
 class RubixBiosSystemd(Systemd):
     SERVICE_FILE_NAME = 'nubeio-rubix-bios.service'
 
-    def __init__(self, wd=None, device_type=None):
+    def __init__(self, wd: str = None, device_type: str = None, auth: bool = False):
         self.__wd = wd
         self.__device_type = device_type
-        self.__port = 1615
-        self.__data_dir = '/data/rubix-bios'
-        self.__global_dir = '/data'
-        self.__artifact_dir = '/data/rubix-bios/apps'
+        self.__auth: bool = auth
+        self.__port: int = 1615
+        self.__data_dir: str = '/data/rubix-bios'
+        self.__global_dir: str = '/data'
+        self.__artifact_dir: str = '/data/rubix-bios/apps'
         super().__init__(RubixBiosSystemd.SERVICE_FILE_NAME)
 
     # noinspection DuplicatedCode
@@ -100,6 +101,8 @@ class RubixBiosSystemd(Systemd):
                     line = line.replace('<artifact_dir>', self.__artifact_dir)
                 if '<device_type>' in line and self.__device_type:
                     line = line.replace('<device_type>', self.__device_type)
+                if ' --auth' in line and not self.__auth:
+                    line = line.replace(' --auth', '')
                 lines.append(line)
         return lines
 
@@ -107,13 +110,14 @@ class RubixBiosSystemd(Systemd):
 class RubixServiceSystemd(Systemd):
     SERVICE_FILE_NAME = 'nubeio-rubix-service.service'
 
-    def __init__(self, wd=None, device_type=None):
+    def __init__(self, wd: str = None, device_type: str = None, auth: bool = False):
         self.__wd = wd
         self.__device_type = device_type
-        self.__port = 1616
-        self.__data_dir = '/data/rubix-service'
-        self.__global_dir = '/data'
-        self.__artifact_dir = '/data/rubix-service/apps'
+        self.__auth: bool = auth
+        self.__port: int = 1616
+        self.__data_dir: str = '/data/rubix-service'
+        self.__global_dir: str = '/data'
+        self.__artifact_dir: str = '/data/rubix-service/apps'
         super().__init__(RubixServiceSystemd.SERVICE_FILE_NAME)
 
     # noinspection DuplicatedCode
@@ -133,5 +137,7 @@ class RubixServiceSystemd(Systemd):
                     line = line.replace('<artifact_dir>', self.__artifact_dir)
                 if '<device_type>' in line and self.__device_type:
                     line = line.replace('<device_type>', self.__device_type)
+                if ' --auth' in line and not self.__auth:
+                    line = line.replace(' --auth', '')
                 lines.append(line)
         return lines

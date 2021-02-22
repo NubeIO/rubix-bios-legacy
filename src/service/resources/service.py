@@ -89,7 +89,7 @@ def install(app_setting: AppSetting, repo_name: str, _version: str) -> bool:
     installed_dir: str = _get_installed_dir(installation_dir, _version)
     delete_existing_folder(installation_dir)
     shutil.copytree(downloaded_dir, installed_dir)
-    systemd: Systemd = RubixServiceSystemd(installed_dir, app_setting.device_type)
+    systemd: Systemd = RubixServiceSystemd(installed_dir, app_setting.device_type, app_setting.auth)
     installation = systemd.install()
     delete_existing_folder(downloaded_dir)
     return installation
