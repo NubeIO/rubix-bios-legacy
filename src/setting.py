@@ -8,7 +8,7 @@ from src.system.utils.file import read_file, write_file
 
 class AppSetting:
     PORT = 1615
-    GLOBAL_DATA_DIR_ENV = 'GLOBAL_DATA'
+    GLOBAL_DIR_ENV = 'GLOBAL_DIR'
     DATA_DIR_ENV = 'RUBIX_SERVICE_DATA'
     CONFIG_DIR_ENV = 'RUBIC_SERVICE_CONFIG'
     ARTIFACT_DIR_ENV = 'ARTIFACT_DIR'

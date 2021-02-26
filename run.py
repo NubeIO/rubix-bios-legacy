@@ -13,8 +13,8 @@ CLI_CTX_SETTINGS = dict(help_option_names=["-h", "--help"], max_content_width=12
 
 @click.command(context_settings=CLI_CTX_SETTINGS)
 @click.option('-p', '--port', type=int, default=AppSetting.PORT, show_default=True, help='Port')
-@click.option('-g', '--global-dir', type=click.Path(), default=lambda: os.environ.get(AppSetting.GLOBAL_DATA_DIR_ENV),
-              help='Global data dir')
+@click.option('-g', '--global-dir', type=click.Path(), default=lambda: os.environ.get(AppSetting.GLOBAL_DIR_ENV),
+              help='Global dir')
 @click.option('-d', '--data-dir', type=click.Path(), default=lambda: os.environ.get(AppSetting.DATA_DIR_ENV),
               help='Application data dir')
 @click.option('-c', '--config-dir', type=click.Path(), default=lambda: os.environ.get(AppSetting.CONFIG_DIR_ENV),

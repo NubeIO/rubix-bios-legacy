@@ -64,19 +64,19 @@ it, then run following command to start from systemd file:
   ```
 - To Run on BBB & Pi: 
     ```bash
-    sudo ./rubix-bios -p 1615 -g /data/rubix-bios -d /data -c /config -a /apps --prod --install
+    sudo ./rubix-bios -p 1615 -g /data/rubix-bios -d data -c config -a apps --prod --install
     ```
 - To Run on BBB & Pi with auth restriction: 
     ```bash
-    sudo ./rubix-bios -p 1615 -g /data/rubix-bios -d /data -c /config -a /apps --prod --install --auth
+    sudo ./rubix-bios -p 1615 -g /data/rubix-bios -d data -c config -a apps --prod --install --auth
     ```  
 - To Run on Ubuntu: 
     ```bash
-    sudo ./rubix-bios -p 1615 -g /data/rubix-bios -d /data -c /config -a /apps --prod --install --device-type amd64
+    sudo ./rubix-bios -p 1615 -g /data/rubix-bios -d data -c config -a apps --prod --install --device-type amd64
     ```    
 - To Run on Ubuntu with auth restriction: 
     ```bash
-    sudo ./rubix-bios -p 1615 -g /data/rubix-bios -d /data -c /config -a /apps --prod --install --auth --device-type amd64
+    sudo ./rubix-bios -p 1615 -g /data/rubix-bios -d data -c config -a apps --prod --install --auth --device-type amd64
     ```   
 
 _**Note:** if bios installed with --auth, services will also open with same auth protection_

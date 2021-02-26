@@ -80,9 +80,9 @@ class RubixBiosSystemd(Systemd):
         self.__auth: bool = auth
         self.__port: int = 1615
         self.__global_dir: str = '/data/rubix-bios'
-        self.__data_dir: str = '/data'
-        self.__config_dir: str = '/config'
-        self.__artifact_dir: str = '/apps'
+        self.__data_dir: str = 'data'
+        self.__config_dir: str = 'config'
+        self.__artifact_dir: str = 'apps'
         super().__init__(RubixBiosSystemd.SERVICE_FILE_NAME)
 
     # noinspection DuplicatedCode
@@ -119,9 +119,9 @@ class RubixServiceSystemd(Systemd):
         self.__auth: bool = auth
         self.__port: int = 1616
         self.__global_dir: str = '/data/rubix-service'
-        self.__data_dir: str = '/data'
-        self.__config_dir: str = '/config'
-        self.__artifact_dir: str = '/apps'
+        self.__data_dir: str = 'data'
+        self.__config_dir: str = 'config'
+        self.__artifact_dir: str = 'apps'
         super().__init__(RubixServiceSystemd.SERVICE_FILE_NAME)
 
     # noinspection DuplicatedCode
