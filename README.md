@@ -36,8 +36,9 @@ Usage: run.py [OPTIONS]
 
 Options:
   -p, --port INTEGER              Port  [default: 1615]
-  -d, --data-dir PATH             Application data dir
   -g, --global-dir PATH           Global data dir
+  -d, --data-dir PATH             Application data dir
+  -c, --config-dir PATH           Global config dir
   -a, --artifact-dir PATH         Artifact downloaded dir
   --prod                          Production mode
   --device-type [amd64|arm64|armv7]
@@ -55,27 +56,27 @@ it, then run following command to start from systemd file:
 
 - Template: 
     ```bash
-    sudo ./rubix-bios -p <port> -d <data_dir> -g <global_dir> -a <artifact_dir> --device-type <device_type> --prod --install
+    sudo ./rubix-bios -p <port> -g <global_dir> -d <data_dir> -c <config_dir> -a <artifact_dir> --device-type <device_type> --prod --install
     ```
 - Template2 (With JWT authorization): 
   ```bash
-  sudo ./rubix-bios -p <port> -d <data_dir> -g <global_dir> -a <artifact_dir> --device-type <device_type> --prod --install --auth
+  sudo ./rubix-bios -p <port> -g <global_dir> -d <data_dir> -c <config_dir> -a <artifact_dir> --device-type <device_type> --prod --install --auth
   ```
 - To Run on BBB & Pi: 
     ```bash
-    sudo ./rubix-bios -p 1615 -d /data/rubix-bios -g /data -a /data/rubix-bios/apps --prod --install
+    sudo ./rubix-bios -p 1615 -g /data/rubix-bios -d /data -c /config -a /apps --prod --install
     ```
 - To Run on BBB & Pi with auth restriction: 
     ```bash
-    sudo ./rubix-bios -p 1615 -d /data/rubix-bios -g /data -a /data/rubix-bios/apps --prod --install --auth
+    sudo ./rubix-bios -p 1615 -g /data/rubix-bios -d /data -c /config -a /apps --prod --install --auth
     ```  
 - To Run on Ubuntu: 
     ```bash
-    sudo ./rubix-bios -p 1615 -d /data/rubix-bios -g /data -a /data/rubix-bios/apps --prod --install --device-type amd64
+    sudo ./rubix-bios -p 1615 -g /data/rubix-bios -d /data -c /config -a /apps --prod --install --device-type amd64
     ```    
 - To Run on Ubuntu with auth restriction: 
     ```bash
-    sudo ./rubix-bios -p 1615 -d /data/rubix-bios -g /data -a /data/rubix-bios/apps --prod --install --auth --device-type amd64
+    sudo ./rubix-bios -p 1615 -g /data/rubix-bios -d /data -c /config -a /apps --prod --install --auth --device-type amd64
     ```   
 
 _**Note:** if bios installed with --auth, services will also open with same auth protection_
