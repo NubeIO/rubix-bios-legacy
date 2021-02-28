@@ -79,9 +79,10 @@ class RubixBiosSystemd(Systemd):
         self.__device_type = device_type
         self.__auth: bool = auth
         self.__port: int = 1615
-        self.__data_dir: str = '/data/rubix-bios'
-        self.__global_dir: str = '/data'
-        self.__artifact_dir: str = '/data/rubix-bios/apps'
+        self.__global_dir: str = '/data/rubix-bios'
+        self.__data_dir: str = 'data'
+        self.__config_dir: str = 'config'
+        self.__artifact_dir: str = 'apps'
         super().__init__(RubixBiosSystemd.SERVICE_FILE_NAME)
 
     # noinspection DuplicatedCode
@@ -93,10 +94,12 @@ class RubixBiosSystemd(Systemd):
                     line = line.replace('<working_dir>', self.__wd)
                 if '<port>' in line and self.__port:
                     line = line.replace('<port>', str(self.__port))
-                if '<data_dir>' in line and self.__data_dir:
-                    line = line.replace('<data_dir>', self.__data_dir)
                 if '<global_dir>' in line and self.__global_dir:
                     line = line.replace('<global_dir>', self.__global_dir)
+                if '<data_dir>' in line and self.__data_dir:
+                    line = line.replace('<data_dir>', self.__data_dir)
+                if '<config_dir>' in line and self.__config_dir:
+                    line = line.replace('<config_dir>', self.__config_dir)
                 if '<artifact_dir>' in line and self.__artifact_dir:
                     line = line.replace('<artifact_dir>', self.__artifact_dir)
                 if '<device_type>' in line and self.__device_type:
@@ -115,9 +118,10 @@ class RubixServiceSystemd(Systemd):
         self.__device_type = device_type
         self.__auth: bool = auth
         self.__port: int = 1616
-        self.__data_dir: str = '/data/rubix-service'
-        self.__global_dir: str = '/data'
-        self.__artifact_dir: str = '/data/rubix-service/apps'
+        self.__global_dir: str = '/data/rubix-service'
+        self.__data_dir: str = 'data'
+        self.__config_dir: str = 'config'
+        self.__artifact_dir: str = 'apps'
         super().__init__(RubixServiceSystemd.SERVICE_FILE_NAME)
 
     # noinspection DuplicatedCode
@@ -129,10 +133,12 @@ class RubixServiceSystemd(Systemd):
                     line = line.replace('<working_dir>', self.__wd)
                 if '<port>' in line and self.__port:
                     line = line.replace('<port>', str(self.__port))
-                if '<data_dir>' in line and self.__data_dir:
-                    line = line.replace('<data_dir>', self.__data_dir)
                 if '<global_dir>' in line and self.__global_dir:
                     line = line.replace('<global_dir>', self.__global_dir)
+                if '<data_dir>' in line and self.__data_dir:
+                    line = line.replace('<data_dir>', self.__data_dir)
+                if '<config_dir>' in line and self.__config_dir:
+                    line = line.replace('<config_dir>', self.__config_dir)
                 if '<artifact_dir>' in line and self.__artifact_dir:
                     line = line.replace('<artifact_dir>', self.__artifact_dir)
                 if '<device_type>' in line and self.__device_type:
