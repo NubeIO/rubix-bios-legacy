@@ -120,6 +120,13 @@ curl -X PUT http://localhost:1615/api/service/upgrade -H "Content-Type: applicat
 ```
 
 
+### Upload artifact and Upgrade Rubix Service
+
+```bash
+curl -X PUT http://localhost:1615/api/service/upload_upgrade -H "Content-Type: multipart/form-data" -F "version=<version>" -F "file=<file>"
+```
+
+
 ### Update Token if your Rubix Service repo is private
 
 ```bash
