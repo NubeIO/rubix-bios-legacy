@@ -1,5 +1,10 @@
 # CHANGELOG
-## [v1.2.0](https://github.com/NubeIO/rubix-bios/tree/v1.1.0) (2020-03-03)
+## [v1.3.0](https://github.com/NubeIO/rubix-bios/tree/v1.3.0) (2020-03-21)
+### Added
+- Change default password
+- Update rubix-service from artifacts option (an alternative of upgrade Rubix Service)
+
+## [v1.2.0](https://github.com/NubeIO/rubix-bios/tree/v1.2.0) (2020-03-03)
 ### Added
 - Add root directory for rubix-service
 
