@@ -105,13 +105,11 @@ sudo ./rubix-bios --uninstall
 curl http://localhost:1615/api/service/releases
 ```
 
-
 ### Update check Rubix Service
 
 ```bash
 curl http://localhost:1615/api/service/update_check
 ```
-
 
 ### Upgrade Rubix Service
 
@@ -119,13 +117,11 @@ curl http://localhost:1615/api/service/update_check
 curl -X PUT http://localhost:1615/api/service/upgrade -H "Content-Type: application/json" -d '{"version": latest|<version>}
 ```
 
-
 ### Upload artifact and Upgrade Rubix Service
 
 ```bash
 curl -X PUT http://localhost:1615/api/service/upload_upgrade -H "Content-Type: multipart/form-data" -F "version=<version>" -F "file=<file>"
 ```
-
 
 ### Update Token if your Rubix Service repo is private
 
