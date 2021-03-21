@@ -8,6 +8,8 @@ import requests
 from flask import current_app
 from flask_restful import Resource, abort, reqparse
 from packaging import version
+from packaging.version import Version
+from werkzeug.datastructures import FileStorage
 
 from src.service.systemd import RubixServiceSystemd, Systemd
 from src.setting import AppSetting
@@ -30,6 +32,31 @@ class UpgradeResource(Resource):
                 _version = _get_latest_release(_get_release_link(REPO_NAME), token)
 
             download(app_setting, REPO_NAME, _version, token)
+            installation = install(app_setting, REPO_NAME, _version)
+            return {
+                'installation': installation
+            }
+        except Exception as e:
+            abort(501, message=str(e))
+
+
+class UploadUpgradeResource(Resource):
+    @classmethod
+    def put(cls):
+        parser = reqparse.RequestParser()
+        parser.add_argument('version', type=str, required=True)
+        parser.add_argument('file', type=FileStorage, location='files', required=True)
+        args = parser.parse_args()
+        _version = args['version']
+        file = args['file']
+        try:
+            if file.filename.split('.')[-1] != 'zip':
+                raise ValueError(f'File must be in zip format')
+            match: bool = Version._regex.search(_version)
+            if not match:
+                raise ValueError(f'Invalid version, version needs to be like v1.0.0, v1.1.0')
+            app_setting: AppSetting = current_app.config[AppSetting.FLASK_KEY]
+            upload(app_setting, REPO_NAME, _version, file)
             installation = install(app_setting, REPO_NAME, _version)
             return {
                 'installation': installation
@@ -73,13 +100,14 @@ def download(app_setting: AppSetting, repo_name: str, _version: str, token: str)
         name: str = _download_unzip_service(download_link, download_dir, app_setting.token)
     except Exception:
         raise ModuleNotFoundError(f'download link {download_link} or token might be incorrect')
-    extracted_dir: str = os.path.join(download_dir, name)
-    dir_with_version: str = os.path.join(download_dir, _version)
-    mode: int = 0o744
-    os.makedirs(dir_with_version, mode, True)
-    app_file: str = os.path.join(dir_with_version, 'app')
-    os.rename(extracted_dir, app_file)
-    os.chmod(app_file, mode)
+    _after_download_upload(download_dir, name, _version)
+
+
+def upload(app_setting: AppSetting, repo_name: str, _version: str, file: FileStorage):
+    download_dir = _get_download_dir(app_setting, repo_name)
+    delete_existing_folder(download_dir)
+    name: str = _upload_unzip_service(file, download_dir)
+    _after_download_upload(download_dir, name, _version)
 
 
 def install(app_setting: AppSetting, repo_name: str, _version: str) -> bool:
@@ -93,6 +121,16 @@ def install(app_setting: AppSetting, repo_name: str, _version: str) -> bool:
     installation = systemd.install()
     delete_existing_folder(downloaded_dir)
     return installation
+
+
+def _after_download_upload(download_dir, name, _version):
+    extracted_dir: str = os.path.join(download_dir, name)
+    dir_with_version: str = os.path.join(download_dir, _version)
+    mode: int = 0o744
+    os.makedirs(dir_with_version, mode, True)
+    app_file: str = os.path.join(dir_with_version, 'app')
+    os.rename(extracted_dir, app_file)
+    os.chmod(app_file, mode)
 
 
 def _get_latest_release(releases_link: str, token: str):
@@ -142,6 +180,12 @@ def _download_unzip_service(download_link, directory, token) -> str:
         headers['Authorization'] = f'Bearer {token}'
     r = requests.get(download_link, headers=headers)
     with ZipFile(BytesIO(r.content)) as z_file:
+        z_file.extractall(directory)
+    return z_file.namelist()[0]
+
+
+def _upload_unzip_service(file, directory) -> str:
+    with ZipFile(file) as z_file:
         z_file.extractall(directory)
     return z_file.namelist()[0]
 
