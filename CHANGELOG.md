@@ -1,4 +1,8 @@
 # CHANGELOG
+## [v1.4.0](https://github.com/NubeIO/rubix-bios/tree/v1.4.0) (2020-04-20)
+### Added
+- Create service control API for start, stop, restart, enable, disable rubix-service
+
 ## [v1.3.0](https://github.com/NubeIO/rubix-bios/tree/v1.3.0) (2020-03-21)
 ### Added
 - Change default password
