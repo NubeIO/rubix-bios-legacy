@@ -1,6 +1,7 @@
 from flask import Blueprint
 from flask_restful import Api
 
+from src.service.resources.control import ServiceControl
 from src.service.resources.service import UpgradeResource, ReleaseResource, UpdateCheckResource, UploadUpgradeResource
 from src.service.resources.token import TokenResource
 from src.system.resources.ping import Ping
@@ -14,6 +15,7 @@ api_service.add_resource(UploadUpgradeResource, '/upload_upgrade')
 api_service.add_resource(TokenResource, '/token')
 api_service.add_resource(ReleaseResource, '/releases')
 api_service.add_resource(UpdateCheckResource, '/update_check')
+api_service.add_resource(ServiceControl, '/control')
 
 bp_system = Blueprint('system', __name__, url_prefix='/api/system')
 api_system = Api(bp_system)
