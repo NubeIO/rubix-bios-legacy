@@ -11,6 +11,7 @@ from packaging import version
 from packaging.version import Version
 from werkzeug.datastructures import FileStorage
 
+from src.exceptions.exception import NotFoundException, PreConditionException
 from src.service.systemd import RubixServiceSystemd, Systemd
 from src.setting import AppSetting
 from src.system.utils.file import delete_existing_folder, get_extracted_dir
@@ -71,6 +72,8 @@ class ReleaseResource(Resource):
         try:
             app_setting: AppSetting = current_app.config[AppSetting.FLASK_KEY]
             return _get_releases(_get_release_link(REPO_NAME), app_setting.token)
+        except PreConditionException as e:
+            abort(428, message=str(e))
         except Exception as e:
             abort(501, message=str(e))
 
@@ -88,6 +91,10 @@ class UpdateCheckResource(Resource):
                 'installed_version': installed_version,
                 'update_required': latest_version != installed_version
             }
+        except PreConditionException as e:
+            abort(428, message=str(e))
+        except NotFoundException as e:
+            abort(401, message=str(e))
         except Exception as e:
             abort(501, message=str(e))
 
@@ -141,11 +148,13 @@ def _get_latest_release(releases_link: str, token: str):
     data = json.loads(resp.content)
     latest_release = ''
     for row in data:
-        release = row.get('tag_name', '') if type(row) is dict else ''
+        if isinstance(row, str):
+            raise PreConditionException('Please insert GitHub valid token!')
+        release = row.get('tag_name')
         if not latest_release or version.parse(latest_release) <= version.parse(release):
             latest_release = release
     if not latest_release:
-        raise ModuleNotFoundError('No version found, check your token & repo')
+        raise NotFoundException('Latest release not found!')
     return latest_release
 
 
@@ -157,6 +166,8 @@ def _get_releases(releases_link: str, token: str):
     data = json.loads(resp.content)
     releases = []
     for row in data:
+        if isinstance(row, str):
+            raise PreConditionException('Please insert GitHub valid token!')
         releases.append(row.get('tag_name'))
     return releases
 
