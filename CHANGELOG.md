@@ -1,4 +1,8 @@
 # CHANGELOG
+## [v1.4.1](https://github.com/NubeIO/rubix-bios/tree/v1.4.1) (2020-05-27)
+### Added
+- Issue fix: str' object has no attribute 'get'
+
 ## [v1.4.0](https://github.com/NubeIO/rubix-bios/tree/v1.4.0) (2020-04-20)
 ### Added
 - Create service control API for start, stop, restart, enable, disable rubix-service
