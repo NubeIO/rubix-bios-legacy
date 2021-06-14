@@ -1,6 +1,9 @@
 import enum
+from typing import Union
 
 from flask_restful import abort
+from registry.models.model_github_info import GitHubInfoModel
+from registry.resources.resource_github_info import get_github_info
 
 
 class ServiceAction(enum.Enum):
@@ -19,3 +22,8 @@ def validate_and_create_action(action) -> str:
 
 def create_service_cmd(action, service_file_name) -> str:
     return f"sudo systemctl {action} {service_file_name}".strip()
+
+
+def get_github_token() -> str:
+    github_info: Union[GitHubInfoModel, None] = get_github_info()
+    return github_info.token if github_info else ""

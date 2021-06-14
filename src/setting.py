@@ -18,7 +18,6 @@ class AppSetting:
     default_data_dir: str = 'data'
     default_config_dir: str = 'config'
     default_artifact_dir: str = 'apps'
-    default_token_file = 'token.txt'
     default_secret_key_file = 'secret_key.txt'
     default_users_file = 'users.txt'
 
@@ -32,7 +31,6 @@ class AppSetting:
                                                  self.__join_global_dir(self.default_artifact_dir))
         self.__download_dir = self.__compute_dir('', os.path.join(self.__artifact_dir, 'download'))
         self.__install_dir = self.__compute_dir('', os.path.join(self.__artifact_dir, 'install'))
-        self.__token_file = os.path.join(self.__data_dir, self.default_token_file)
         self.__prod = kwargs.get('prod') or False
         self.__device_type = kwargs.get('device_type')
         self.__secret_key = ''
@@ -63,10 +61,6 @@ class AppSetting:
     @property
     def install_dir(self) -> str:
         return self.__install_dir
-
-    @property
-    def token(self) -> str:
-        return read_file(os.path.join(self.data_dir, self.default_token_file))
 
     @property
     def prod(self) -> bool:

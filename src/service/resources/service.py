@@ -15,6 +15,7 @@ from src.exceptions.exception import NotFoundException, PreConditionException
 from src.service.systemd import RubixServiceSystemd, Systemd
 from src.setting import AppSetting
 from src.system.utils.file import delete_existing_folder, get_extracted_dir
+from src.utils.utils import get_github_token
 
 REPO_NAME: str = 'rubix-service'
 
@@ -28,7 +29,7 @@ class UpgradeResource(Resource):
         _version = args['version']
         app_setting: AppSetting = current_app.config[AppSetting.FLASK_KEY]
         try:
-            token: str = app_setting.token
+            token: str = get_github_token()
             if _version == "latest":
                 _version = _get_latest_release(_get_release_link(REPO_NAME), token)
 
@@ -70,8 +71,7 @@ class ReleaseResource(Resource):
     @classmethod
     def get(cls):
         try:
-            app_setting: AppSetting = current_app.config[AppSetting.FLASK_KEY]
-            return _get_releases(_get_release_link(REPO_NAME), app_setting.token)
+            return _get_releases(_get_release_link(REPO_NAME), get_github_token())
         except PreConditionException as e:
             abort(428, message=str(e))
         except Exception as e:
@@ -83,8 +83,7 @@ class UpdateCheckResource(Resource):
     def get(cls):
         app_setting: AppSetting = current_app.config[AppSetting.FLASK_KEY]
         try:
-            token: str = app_setting.token
-            latest_version: str = _get_latest_release(_get_release_link(REPO_NAME), token)
+            latest_version: str = _get_latest_release(_get_release_link(REPO_NAME), get_github_token())
             installed_version: str = get_extracted_dir(_get_installation_dir(app_setting, REPO_NAME)).split("/")[-1]
             return {
                 'latest_version': latest_version,
@@ -104,7 +103,7 @@ def download(app_setting: AppSetting, repo_name: str, _version: str, token: str)
     download_link: str = _get_download_link(repo_name, _version, app_setting.device_type, token)
     delete_existing_folder(download_dir)
     try:
-        name: str = _download_unzip_service(download_link, download_dir, app_setting.token)
+        name: str = _download_unzip_service(download_link, download_dir, token)
     except Exception:
         raise ModuleNotFoundError(f'download link {download_link} or token might be incorrect')
     _after_download_upload(download_dir, name, _version)
