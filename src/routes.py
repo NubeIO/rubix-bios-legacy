@@ -2,8 +2,8 @@ from flask import Blueprint
 from flask_restful import Api
 
 from src.service.resources.control import ServiceControl
-from src.service.resources.service import UpgradeResource, ReleaseResource, UpdateCheckResource, UploadUpgradeResource
 from src.service.resources.token import TokenResource
+from src.service.resources.upgrade import UpgradeResource, ReleaseResource, UpdateCheckResource, UploadUpgradeResource
 from src.system.resources.ping import Ping
 from src.users.resource_login_users import UsersLoginResource
 from src.users.resource_users import UsersResource

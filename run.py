@@ -3,9 +3,11 @@
 import os
 
 import click
+from registry.models.model_bios_info import BiosInfoModel
+from registry.resources.resource_bios_info import put_bios_info
 
-from src.app import create_app
-from src.service.systemd import RubixBiosSystemd
+from src.server import GunicornFlaskApplication
+from src.service.models.model_systemd import RubixBiosSystemd
 from src.setting import AppSetting
 
 CLI_CTX_SETTINGS = dict(help_option_names=["-h", "--help"], max_content_width=120)
@@ -27,9 +29,14 @@ CLI_CTX_SETTINGS = dict(help_option_names=["-h", "--help"], max_content_width=12
 @click.option('--install', is_flag=True, help='Install rubix-bios')
 @click.option('--uninstall', is_flag=True, help='Uninstall rubix-bios')
 @click.option('--auth', is_flag=True, help='Enable JWT authentication')
-def cli(port, global_dir, data_dir, config_dir, artifact_dir, prod, device_type, install, uninstall, auth):
-    setting = AppSetting(global_dir=global_dir, data_dir=data_dir, config_dir=config_dir, artifact_dir=artifact_dir,
-                         prod=prod, device_type=device_type, auth=auth)
+@click.option('--gunicorn-config', help='Gunicorn: config file(gunicorn.conf.py)')
+@click.option('-l', '--logging-conf', help='Rubix-Service: logging config file')
+def cli(port, global_dir, data_dir, config_dir, artifact_dir, prod, device_type, install, uninstall, auth,
+        gunicorn_config, logging_conf):
+    setting = AppSetting(port=port, global_dir=global_dir, data_dir=data_dir, config_dir=config_dir,
+                         artifact_dir=artifact_dir, prod=prod, device_type=device_type, auth=auth)
+
+    put_bios_info(BiosInfoModel(port=setting.port))
 
     if install:
         systemd = RubixBiosSystemd(os.getcwd(), setting.device_type, setting.auth)
@@ -38,8 +45,14 @@ def cli(port, global_dir, data_dir, config_dir, artifact_dir, prod, device_type,
         systemd = RubixBiosSystemd()
         systemd.uninstall()
     else:
-        app = create_app(setting)
-        app.run(host='0.0.0.0', port=port)
+        options = {
+            'bind': '%s:%s' % ('0.0.0.0', setting.port),
+            'workers': 1,
+            'config': gunicorn_config,
+            'logconfig': logging_conf,
+            'preload_app': False
+        }
+        GunicornFlaskApplication(setting, options).run()
 
 
 if __name__ == '__main__':

@@ -12,7 +12,7 @@ from packaging.version import Version
 from werkzeug.datastructures import FileStorage
 
 from src.exceptions.exception import NotFoundException, PreConditionException
-from src.service.systemd import RubixServiceSystemd, Systemd
+from src.service.models.model_systemd import Systemd, RubixServiceSystemd
 from src.setting import AppSetting
 from src.system.utils.file import delete_existing_folder, get_extracted_dir
 from src.utils.utils import get_github_token
