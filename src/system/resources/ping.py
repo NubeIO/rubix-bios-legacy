@@ -4,6 +4,7 @@ from datetime import datetime
 from flask import current_app
 from flask_restful import Resource
 
+from src.service.models.model_upgrade import UpgradeModel
 from src.setting import AppSetting
 from src.system.utils.project import get_version
 
@@ -34,4 +35,5 @@ class Ping(Resource):
             'up_min': up_min,
             'up_hour': up_hour,
             'deployment_mode': deployment_mode,
+            'upgrade_app_state': UpgradeModel.get_app_state().name
         }

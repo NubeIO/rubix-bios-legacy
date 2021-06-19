@@ -13,6 +13,7 @@ from werkzeug.datastructures import FileStorage
 
 from src.exceptions.exception import NotFoundException, PreConditionException
 from src.service.models.model_systemd import Systemd, RubixServiceSystemd
+from src.service.models.model_upgrade import AppState, UpgradeModel
 from src.setting import AppSetting
 from src.system.utils.file import delete_existing_folder, get_extracted_dir
 from src.utils.utils import get_github_token
@@ -31,7 +32,7 @@ class UpgradeResource(Resource):
         try:
             token: str = get_github_token()
             if _version == "latest":
-                _version = _get_latest_release(_get_release_link(REPO_NAME), token)
+                _version = get_latest_release(get_release_link(REPO_NAME), token)
 
             download(app_setting, REPO_NAME, _version, token)
             installation = install(app_setting, REPO_NAME, _version)
@@ -67,11 +68,27 @@ class UploadUpgradeResource(Resource):
             abort(501, message=str(e))
 
 
+class SelfUpgradeResource(Resource):
+    @classmethod
+    def put(cls):
+        app_state: AppState = UpgradeModel.get_app_state()
+        if app_state == AppState.FINISHED:
+            try:
+                token: str = get_github_token()
+                _version = get_latest_release(get_release_link(REPO_NAME), token)
+                UpgradeModel.update_app_state(AppState.STARTED)
+                return {'message': "Upgrade app service is started to run on background!"}
+            except Exception as e:
+                abort(501, message=str(e))
+        else:
+            abort(428, message=f"Upgrade app service is already {app_state.name}")
+
+
 class ReleaseResource(Resource):
     @classmethod
     def get(cls):
         try:
-            return _get_releases(_get_release_link(REPO_NAME), get_github_token())
+            return _get_releases(get_release_link(REPO_NAME), get_github_token())
         except PreConditionException as e:
             abort(428, message=str(e))
         except Exception as e:
@@ -81,10 +98,9 @@ class ReleaseResource(Resource):
 class UpdateCheckResource(Resource):
     @classmethod
     def get(cls):
-        app_setting: AppSetting = current_app.config[AppSetting.FLASK_KEY]
         try:
-            latest_version: str = _get_latest_release(_get_release_link(REPO_NAME), get_github_token())
-            installed_version: str = get_extracted_dir(_get_installation_dir(app_setting, REPO_NAME)).split("/")[-1]
+            latest_version: str = get_latest_release(get_release_link(REPO_NAME), get_github_token())
+            installed_version: str = get_installed_app_version()
             return {
                 'latest_version': latest_version,
                 'installed_version': installed_version,
@@ -139,24 +155,6 @@ def _after_download_upload(download_dir, name, _version):
     os.chmod(app_file, mode)
 
 
-def _get_latest_release(releases_link: str, token: str):
-    headers = {}
-    if token:
-        headers['Authorization'] = f'Bearer {token}'
-    resp = requests.get(releases_link, headers=headers)
-    data = json.loads(resp.content)
-    latest_release = ''
-    for row in data:
-        if isinstance(row, str):
-            raise PreConditionException('Please insert GitHub valid token!')
-        release = row.get('tag_name')
-        if not latest_release or version.parse(latest_release) <= version.parse(release):
-            latest_release = release
-    if not latest_release:
-        raise NotFoundException('Latest release not found!')
-    return latest_release
-
-
 def _get_releases(releases_link: str, token: str):
     headers = {}
     if token:
@@ -200,10 +198,6 @@ def _upload_unzip_service(file, directory) -> str:
     return z_file.namelist()[0]
 
 
-def _get_release_link(repo_name: str) -> str:
-    return 'https://api.github.com/repos/NubeIO/{}/releases'.format(repo_name)
-
-
 def _get_download_dir(app_setting: AppSetting, repo_name: str) -> str:
     return os.path.join(app_setting.download_dir, repo_name)
 
@@ -218,3 +212,31 @@ def _get_downloaded_dir(download_dir: str, _version: str) -> str:
 
 def _get_installed_dir(installation_dir: str, _version: str) -> str:
     return os.path.join(installation_dir, _version)
+
+
+def get_latest_release(releases_link: str, token: str):
+    headers = {}
+    if token:
+        headers['Authorization'] = f'Bearer {token}'
+    resp = requests.get(releases_link, headers=headers)
+    data = json.loads(resp.content)
+    latest_release = ''
+    for row in data:
+        if isinstance(row, str):
+            raise PreConditionException('Please insert GitHub valid token!')
+        release = row.get('tag_name')
+        if not latest_release or version.parse(latest_release) <= version.parse(release):
+            latest_release = release
+    if not latest_release:
+        raise NotFoundException('Latest release not found!')
+    return latest_release
+
+
+def get_release_link(repo_name: str) -> str:
+    return 'https://api.github.com/repos/NubeIO/{}/releases'.format(repo_name)
+
+
+def get_installed_app_version() -> str:
+    app_setting: AppSetting = current_app.config[AppSetting.FLASK_KEY]
+    installed_version: str = get_extracted_dir(_get_installation_dir(app_setting, REPO_NAME)).split("/")[-1]
+    return installed_version

@@ -9,7 +9,8 @@ from src.system.utils.file import write_file, read_file
 
 class AppState(enum.Enum):
     STARTED = 1
-    FINISHED = 2
+    RUNNING = 2
+    FINISHED = 3
 
 
 class UpgradeModel:
