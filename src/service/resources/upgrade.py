@@ -48,12 +48,16 @@ class UpgradeResource(Resource):
             token: str = get_github_token()
             if _version == "latest":
                 _version = get_latest_release(get_release_link(REPO_NAME), token)
-
+            installed_version: str = get_installed_app_version()
+            if version.parse(installed_version) > version.parse(_version):
+                raise BadDataException("You can't downgrade the service!")
             download(app_setting, REPO_NAME, _version, token)
             installation = install(app_setting, REPO_NAME, _version)
             return {
                 'installation': installation
             }
+        except BadDataException as e:
+            abort(400, message=str(e))
         except Exception as e:
             abort(501, message=str(e))
 
@@ -73,12 +77,17 @@ class UploadUpgradeResource(Resource):
             match: bool = Version._regex.search(_version)
             if not match:
                 raise ValueError(f'Invalid version, version needs to be like v1.0.0, v1.1.0')
+            installed_version: str = get_installed_app_version()
+            if version.parse(installed_version) > version.parse(_version):
+                raise BadDataException("You can't downgrade the service!")
             app_setting: AppSetting = current_app.config[AppSetting.FLASK_KEY]
             upload(app_setting, REPO_NAME, _version, file)
             installation = install(app_setting, REPO_NAME, _version)
             return {
                 'installation': installation
             }
+        except BadDataException as e:
+            abort(400, message=str(e))
         except Exception as e:
             abort(501, message=str(e))
 
@@ -92,8 +101,8 @@ class SelfUpgradeResource(Resource):
                 raise PreConditionException(f"Upgrade app service is already {app_state.name}")
             token: str = get_github_token()
             _version = get_latest_release(get_release_link(REPO_NAME), token)
-            installed_version = get_installed_app_version()
-            if _version == installed_version:
+            installed_version: str = get_installed_app_version()
+            if installed_version == _version:
                 raise BadDataException("Already app service is upgraded into the latest version!")
             UpgradeModel.update_app_state(AppState.STARTED)
             return {'message': "Upgrade app service is started to run on background!"}
@@ -200,7 +209,9 @@ def _get_releases(releases_link: str, token: str):
     for row in data:
         if isinstance(row, str):
             raise PreConditionException('Please insert GitHub valid token!')
-        releases.append(row.get('tag_name'))
+        installed_version: str = get_installed_app_version()
+        if version.parse(installed_version) <= version.parse(row.get('tag_name')):
+            releases.append(row.get('tag_name'))
     return releases
 
 
