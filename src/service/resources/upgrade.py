@@ -33,6 +33,8 @@ class ServicesResource(Resource):
             app_model.upgrade_app_state = UpgradeModel().get_app_state().name
             app_model.date_since = status.get('date_since', '')
             app_model.time_since = status.get('time_since', '')
+            github_token: str = get_github_token()
+            app_model.token = f"{github_token[:4]}***{github_token[-4:]}"
         return app_model.to_dict()
 
 
