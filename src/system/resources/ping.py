@@ -4,8 +4,11 @@ from datetime import datetime
 from flask import current_app
 from flask_restful import Resource
 
+from src.service.models.model_systemd import RubixServiceSystemd
+from src.service.models.model_upgrade import UpgradeModel
 from src.setting import AppSetting
 from src.system.utils.project import get_version
+from src.utils.shell import systemctl_status
 
 startTime = time.time()
 up_time_date = str(datetime.now())
@@ -28,10 +31,19 @@ class Ping(Resource):
         up_hour = "{:.2f}".format(up_hour)
         setting: AppSetting = current_app.config[AppSetting.FLASK_KEY]
         deployment_mode = 'production' if setting.prod else 'development'
+        try:
+            status: dict = systemctl_status(RubixServiceSystemd.SERVICE_FILE_NAME)
+        except Exception:
+            status: dict = {}
         return {
             'version': get_version(),
             'up_time_date': up_time_date,
             'up_min': up_min,
             'up_hour': up_hour,
             'deployment_mode': deployment_mode,
+            'app': {
+                'upgrade_app_state': UpgradeModel.get_app_state().name,
+                **status
+            }
+
         }

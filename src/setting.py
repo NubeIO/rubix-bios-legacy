@@ -1,9 +1,24 @@
+import json
 import os
 import secrets
 
 from flask import Flask
 
 from src.system.utils.file import read_file, write_file
+
+
+class BaseSetting:
+
+    def reload(self, setting: dict):
+        if setting is not None:
+            self.__dict__ = {k: setting.get(k, v) for k, v in self.__dict__.items()}
+        return self
+
+    def serialize(self, pretty=True) -> str:
+        return json.dumps(self, default=lambda o: o.__dict__, indent=2 if pretty else None)
+
+    def to_dict(self):
+        return json.loads(self.serialize(pretty=False))
 
 
 class AppSetting:
@@ -14,15 +29,19 @@ class AppSetting:
     ARTIFACT_DIR_ENV = 'ARTIFACT_DIR'
     FLASK_KEY: str = 'APP_SETTING'
 
+    default_logging_conf: str = 'logging.conf'
+    fallback_logging_conf: str = 'config/logging.conf'
+    fallback_logging_prod_conf: str = 'config/logging.prod.conf'
     default_global_dir: str = 'out'
     default_data_dir: str = 'data'
     default_config_dir: str = 'config'
     default_artifact_dir: str = 'apps'
-    default_token_file = 'token.txt'
     default_secret_key_file = 'secret_key.txt'
     default_users_file = 'users.txt'
+    default_app_state_file = 'app_state.txt'
 
     def __init__(self, **kwargs):
+        self.__port = kwargs.get('port') or AppSetting.PORT
         self.__global_dir = self.__compute_dir(kwargs.get('global_dir'), self.default_global_dir, 0o777)
         self.__data_dir = self.__compute_dir(self.__join_global_dir(kwargs.get('data_dir')),
                                              self.__join_global_dir(self.default_data_dir))
@@ -32,13 +51,17 @@ class AppSetting:
                                                  self.__join_global_dir(self.default_artifact_dir))
         self.__download_dir = self.__compute_dir('', os.path.join(self.__artifact_dir, 'download'))
         self.__install_dir = self.__compute_dir('', os.path.join(self.__artifact_dir, 'install'))
-        self.__token_file = os.path.join(self.__data_dir, self.default_token_file)
         self.__prod = kwargs.get('prod') or False
         self.__device_type = kwargs.get('device_type')
         self.__secret_key = ''
         self.__secret_key_file = os.path.join(self.__config_dir, self.default_secret_key_file)
         self.__users_file = os.path.join(self.__data_dir, self.default_users_file)
+        self.__app_state_file = os.path.join(self.__data_dir, self.default_app_state_file)
         self.__auth = kwargs.get('auth') or False
+
+    @property
+    def port(self):
+        return self.__port
 
     @property
     def global_dir(self):
@@ -65,10 +88,6 @@ class AppSetting:
         return self.__install_dir
 
     @property
-    def token(self) -> str:
-        return read_file(os.path.join(self.data_dir, self.default_token_file))
-
-    @property
     def prod(self) -> bool:
         return self.__prod
 
@@ -87,6 +106,10 @@ class AppSetting:
     @property
     def users_file(self) -> str:
         return self.__users_file
+
+    @property
+    def app_state_file(self) -> str:
+        return self.__app_state_file
 
     def init_app(self, app: Flask):
         self.__secret_key = AppSetting.__handle_secret_key(self.__secret_key_file)

@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 from src.pyinstaller import resource_path
 from src.system.utils.file import delete_file
-from src.system.utils.shell import execute_command
+from src.utils.shell import execute_command
 
 SERVICE_DIR = '/lib/systemd/system'
 SERVICE_DIR_SOFT_LINK = '/etc/systemd/system/multi-user.target.wants'
