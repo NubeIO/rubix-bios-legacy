@@ -3,14 +3,39 @@ from typing import List
 
 from flask import current_app
 
-from src.setting import AppSetting
+from src.setting import AppSetting, BaseSetting
 from src.system.utils.file import write_file, read_file
+
+
+class States(enum.Enum):
+    """
+    Available unit active states list of systemctl, `systemctl --state=help`.
+    """
+    ACTIVE = 'active'
+    RELOADING = 'reloading'
+    INACTIVE = 'inactive'
+    FAILED = 'failed'
+    ACTIVATING = 'activating'
+    DEACTIVATING = 'deactivating'
+    MAINTENANCE = 'maintenance'
 
 
 class AppState(enum.Enum):
     STARTED = 1
     RUNNING = 2
     FINISHED = 3
+
+
+class AppModel(BaseSetting):
+    def __init__(self):
+        self.version = ""
+        self.service = ""
+        self.is_installed = False
+        self.state = States.INACTIVE.name
+        self.status = False
+        self.upgrade_state = AppState.FINISHED.name
+        self.date_since = ""
+        self.time_since = ""
 
 
 class UpgradeModel:

@@ -11,14 +11,31 @@ from packaging import version
 from packaging.version import Version
 from werkzeug.datastructures import FileStorage
 
-from src.exceptions.exception import NotFoundException, PreConditionException
+from src.exceptions.exception import NotFoundException, PreConditionException, BadDataException
 from src.service.models.model_systemd import Systemd, RubixServiceSystemd
-from src.service.models.model_upgrade import AppState, UpgradeModel
+from src.service.models.model_upgrade import AppState, UpgradeModel, AppModel
 from src.setting import AppSetting
 from src.system.utils.file import delete_existing_folder, get_extracted_dir
+from src.utils.shell import systemctl_installed, systemctl_status
 from src.utils.utils import get_github_token
 
 REPO_NAME: str = 'rubix-service'
+
+
+class ServicesResource(Resource):
+    @classmethod
+    def get(cls):
+        app_model: AppModel = AppModel()
+        if systemctl_installed(RubixServiceSystemd.SERVICE_FILE_NAME):
+            app_model.service = RubixServiceSystemd.SERVICE_FILE_NAME
+            app_model.is_installed = True
+            status = systemctl_status(RubixServiceSystemd.SERVICE_FILE_NAME)
+            app_model.state = status.get('state', '')
+            app_model.status = status.get('status', '')
+            app_model.upgrade_state = UpgradeModel().get_app_state().name
+            app_model.date_since = status.get('date_since', '')
+            app_model.time_since = status.get('time_since', '')
+        return app_model.to_dict()
 
 
 class UpgradeResource(Resource):
@@ -72,16 +89,22 @@ class SelfUpgradeResource(Resource):
     @classmethod
     def put(cls):
         app_state: AppState = UpgradeModel.get_app_state()
-        if app_state == AppState.FINISHED:
-            try:
-                token: str = get_github_token()
-                _version = get_latest_release(get_release_link(REPO_NAME), token)
-                UpgradeModel.update_app_state(AppState.STARTED)
-                return {'message': "Upgrade app service is started to run on background!"}
-            except Exception as e:
-                abort(501, message=str(e))
-        else:
-            abort(428, message=f"Upgrade app service is already {app_state.name}")
+        try:
+            if app_state != AppState.FINISHED:
+                raise PreConditionException(f"Upgrade app service is already {app_state.name}")
+            token: str = get_github_token()
+            _version = get_latest_release(get_release_link(REPO_NAME), token)
+            installed_version = get_installed_app_version()
+            if version == installed_version:
+                raise BadDataException("Already app service is upgraded into the newer version!")
+            UpgradeModel.update_app_state(AppState.STARTED)
+            return {'message': "Upgrade app service is started to run on background!"}
+        except PreConditionException as e:
+            abort(428, message=str(e))
+        except BadDataException as e:
+            abort(400, message=str(e))
+        except Exception as e:
+            abort(501, message=str(e))
 
 
 class ReleaseResource(Resource):
@@ -106,6 +129,20 @@ class UpdateCheckResource(Resource):
                 'installed_version': installed_version,
                 'update_required': latest_version != installed_version
             }
+        except PreConditionException as e:
+            abort(428, message=str(e))
+        except NotFoundException as e:
+            abort(401, message=str(e))
+        except Exception as e:
+            abort(501, message=str(e))
+
+
+class LatestVersionResource(Resource):
+    @classmethod
+    def get(cls):
+        try:
+            latest_version: str = get_latest_release(get_release_link(REPO_NAME), get_github_token())
+            return {'latest_version': latest_version}
         except PreConditionException as e:
             abort(428, message=str(e))
         except NotFoundException as e:

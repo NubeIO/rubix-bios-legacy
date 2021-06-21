@@ -48,8 +48,14 @@ def check_and_upgrade_app_loop():
         is_active: bool = systemctl_is_active_service_state(RubixServiceSystemd.SERVICE_FILE_NAME)
         logger.info(f'App state: {is_active}')
         if not is_active:
-            version: str = get_installed_app_version() or get_latest_release(get_release_link(REPO_NAME), token)
+            version: str = get_installed_app_version()
+            if not version:
+                logger.info(f"We are started to install latest version: {version}")
+                version = get_latest_release(get_release_link(REPO_NAME), token)
+            else:
+                logger.info(f"We are started to install existing version: {version}")
             installation: bool = download_and_install_app(version, token)
+            logger.info(f'Installation state: {{"version": {version}, "installation:" {installation}}}')
             if not installation:
                 return
         UpgradeModel.update_app_state(AppState.FINISHED)
