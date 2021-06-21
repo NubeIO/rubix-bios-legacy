@@ -27,6 +27,7 @@ class ServicesResource(Resource):
     def get(cls):
         app_model: AppModel = AppModel()
         if systemctl_installed(RubixServiceSystemd.SERVICE_FILE_NAME):
+            app_model.version = get_installed_app_version()
             app_model.service = RubixServiceSystemd.SERVICE_FILE_NAME
             app_model.is_installed = True
             status = systemctl_status(RubixServiceSystemd.SERVICE_FILE_NAME)
@@ -95,8 +96,8 @@ class SelfUpgradeResource(Resource):
             token: str = get_github_token()
             _version = get_latest_release(get_release_link(REPO_NAME), token)
             installed_version = get_installed_app_version()
-            if version == installed_version:
-                raise BadDataException("Already app service is upgraded into the newer version!")
+            if _version == installed_version:
+                raise BadDataException("Already app service is upgraded into the latest version!")
             UpgradeModel.update_app_state(AppState.STARTED)
             return {'message': "Upgrade app service is started to run on background!"}
         except PreConditionException as e:
