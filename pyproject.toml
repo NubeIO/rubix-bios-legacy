@@ -13,7 +13,7 @@ Flask-Cors = "^3.0.9"
 click = "^7.1.2"
 packaging = "^20.8"
 PyJWT = "^2.0.1"
-rubix-registry = { git = "https://github.com/NubeIO/rubix-registry", rev = "v1.1.0" }
+rubix-registry = { git = "https://github.com/NubeIO/rubix-registry", rev = "v1.1.1" }
 gevent = [
     { version = "20.12.1", markers = "platform_machine == 'x86_64'" },
     { git = "https://github.com/gevent/gevent.git", tag = "20.12.1", markers = "platform_machine != 'x86_64'" }
