@@ -16,7 +16,7 @@ from src.service.models.model_systemd import Systemd, RubixServiceSystemd
 from src.service.models.model_upgrade import AppState, UpgradeModel, AppModel
 from src.setting import AppSetting
 from src.system.utils.file import delete_existing_folder, get_extracted_dir
-from src.utils.shell import systemctl_installed, systemctl_status
+from src.utils.shell import systemctl_installed, systemctl_status_specific_details
 from src.utils.utils import get_github_token
 
 REPO_NAME: str = 'rubix-service'
@@ -29,11 +29,8 @@ class ServicesResource(Resource):
         if systemctl_installed(RubixServiceSystemd.SERVICE_FILE_NAME):
             app_model.version = get_installed_app_version()
             app_model.service = RubixServiceSystemd.SERVICE_FILE_NAME
-            app_model.is_installed = True
-            status = systemctl_status(RubixServiceSystemd.SERVICE_FILE_NAME)
-            app_model.state = status.get('state', '')
-            app_model.status = status.get('status', '')
-            app_model.upgrade_state = UpgradeModel().get_app_state().name
+            status = systemctl_status_specific_details(RubixServiceSystemd.SERVICE_FILE_NAME)
+            app_model.upgrade_app_state = UpgradeModel().get_app_state().name
             app_model.date_since = status.get('date_since', '')
             app_model.time_since = status.get('time_since', '')
         return app_model.to_dict()

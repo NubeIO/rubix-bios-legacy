@@ -19,16 +19,15 @@ logger = logging.getLogger(__name__)
 class Background:
     @staticmethod
     def run():
-        pass
-        gevent.spawn(check_and_upgrade_app, current_app._get_current_object().app_context)
+        setting: AppSetting = current_app.config[AppSetting.FLASK_KEY]
+        if setting.prod:
+            gevent.spawn(check_and_upgrade_app, current_app._get_current_object().app_context)
 
 
 def check_and_upgrade_app(app_context):
     with app_context():
         while True:
-            setting: AppSetting = current_app.config[AppSetting.FLASK_KEY]
-            if setting.prod:
-                check_and_upgrade_app_loop()
+            check_and_upgrade_app_loop()
             sleep(10)
 
 
@@ -71,6 +70,8 @@ def download_and_install_app(_version, token) -> bool:
     app_setting: AppSetting = current_app.config[AppSetting.FLASK_KEY]
     try:
         download(app_setting, REPO_NAME, _version, token)
+        logger.info("Download process has been successful...")
         return install(app_setting, REPO_NAME, _version)
-    except Exception:
+    except Exception as e:
+        logger.error(str(e))
         return False
