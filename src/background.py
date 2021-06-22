@@ -1,4 +1,6 @@
 import logging
+import time
+from typing import Union
 
 import gevent
 from flask import current_app
@@ -15,6 +17,11 @@ from src.utils.utils import get_github_token
 
 logger = logging.getLogger(__name__)
 
+REITERATION_TIME_SEC: int = 10
+RE_DOWNLOAD_TIME_SEC: int = 600
+
+download_start_time: Union[float, None] = None
+
 
 class Background:
     @staticmethod
@@ -27,8 +34,10 @@ class Background:
 def check_and_upgrade_app(app_context):
     with app_context():
         while True:
+            logger.info("Looping has been started ---------------------")
             check_and_upgrade_app_loop()
-            sleep(10)
+            logger.info("End of looping -------------------------------")
+            sleep(REITERATION_TIME_SEC)
 
 
 @exception_handler
@@ -38,6 +47,7 @@ def check_and_upgrade_app_loop():
     if app_state == AppState.STARTED:
         logger.info(f'App upgrade state: {app_state.name}')
         version: str = get_latest_release(get_release_link(REPO_NAME), token)
+        logger.info(f"We are started to download/install latest version: {version}")
         installation: bool = download_and_install_app(version, token)
         if not installation:
             return
@@ -49,10 +59,10 @@ def check_and_upgrade_app_loop():
         if not is_active:
             version: str = get_installed_app_version()
             if not version:
-                logger.info(f"We are started to install latest version: {version}")
+                logger.info(f"We are started to download/install latest version: {version}")
                 version = get_latest_release(get_release_link(REPO_NAME), token)
             else:
-                logger.info(f"We are started to install existing version: {version}")
+                logger.info(f"We are started to download/install existing version: {version}")
             installation: bool = download_and_install_app(version, token)
             logger.info(f'Installation state: {{"version": {version}, "installation:" {installation}}}')
             if not installation:
@@ -68,9 +78,23 @@ def check_and_upgrade_app_loop():
 
 def download_and_install_app(_version, token) -> bool:
     app_setting: AppSetting = current_app.config[AppSetting.FLASK_KEY]
+    global download_start_time
     try:
-        download(app_setting, REPO_NAME, _version, token)
-        logger.info("Download process has been successful...")
+        should_download: bool = False
+        if download_start_time is None:
+            download_start_time = time.time()
+            should_download = True
+            logger.info("Download process has been started...")
+        elif time.time() - download_start_time >= RE_DOWNLOAD_TIME_SEC:
+            should_download = True
+            download_start_time = time.time()
+            logger.info("Re-download process has been started...")
+        else:
+            time_diff: str = "{:.2f}".format(time.time() - download_start_time)
+            logger.info(f"We skipped download process coz re-download time difference is: {time_diff} seconds")
+        if should_download:
+            download(app_setting, REPO_NAME, _version, token)
+        logger.info("Installation process has been started...")
         return install(app_setting, REPO_NAME, _version)
     except Exception as e:
         logger.error(str(e))
