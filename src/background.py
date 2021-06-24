@@ -7,6 +7,7 @@ from flask import current_app
 from gevent import sleep
 
 from src.handlers.exception import exception_handler
+from src.restart_registry import RestartRegistry
 from src.service.models.model_systemd import RubixServiceSystemd
 from src.service.models.model_upgrade import UpgradeModel, AppState
 from src.service.resources.upgrade import download, REPO_NAME, install, get_latest_release, get_release_link, \
@@ -19,6 +20,7 @@ logger = logging.getLogger(__name__)
 
 REITERATION_TIME_SEC: int = 10
 RE_DOWNLOAD_TIME_SEC: int = 600
+WAIT_AFTER_RESTART: int = 60
 
 download_start_time: Union[float, None] = None
 
@@ -70,6 +72,10 @@ def check_and_upgrade_app_loop():
         UpgradeModel.update_app_state(AppState.FINISHED)
     else:
         logger.info(f'App upgrade state: {app_state.name}')
+        if RestartRegistry().restarted:
+            RestartRegistry().set_restart_state(False)
+            logger.info(f"We are waiting {WAIT_AFTER_RESTART} seconds coz restart function has been called...")
+            sleep(WAIT_AFTER_RESTART)
         is_active: bool = systemctl_is_active_service_state(RubixServiceSystemd.SERVICE_FILE_NAME)
         logger.info(f'App state: {is_active}')
         if not is_active:
