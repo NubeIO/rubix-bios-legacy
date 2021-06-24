@@ -18,8 +18,8 @@ from src.utils.utils import get_github_token
 
 logger = logging.getLogger(__name__)
 
-REITERATION_TIME_SEC: int = 10
-RE_DOWNLOAD_TIME_SEC: int = 600
+REITERATION_TIME_SEC: int = 20
+RE_DOWNLOAD_TIME_SEC: int = 300
 WAIT_AFTER_RESTART: int = 60
 
 download_start_time: Union[float, None] = None

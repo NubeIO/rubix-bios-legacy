@@ -3,8 +3,11 @@
 import os
 
 import click
+from registry.constants import RUBIX_REGISTRY_DIR
 from registry.models.model_bios_info import BiosInfoModel
+from registry.models.model_github_info import GitHubInfoModel
 from registry.resources.resource_bios_info import put_bios_info
+from registry.resources.resource_github_info import put_github_info
 
 from src.server import GunicornFlaskApplication
 from src.service.models.model_systemd import RubixBiosSystemd
@@ -29,13 +32,17 @@ CLI_CTX_SETTINGS = dict(help_option_names=["-h", "--help"], max_content_width=12
 @click.option('--install', is_flag=True, help='Install rubix-bios')
 @click.option('--uninstall', is_flag=True, help='Uninstall rubix-bios')
 @click.option('--auth', is_flag=True, help='Enable JWT authentication')
+@click.option('-t', '--token', help='GitHub token')
 @click.option('--gunicorn-config', help='Gunicorn: config file(gunicorn.conf.py)')
 @click.option('-l', '--logging-conf', help='Rubix-Service: logging config file')
-def cli(port, global_dir, data_dir, config_dir, artifact_dir, prod, device_type, install, uninstall, auth,
+def cli(port, global_dir, data_dir, config_dir, artifact_dir, prod, device_type, install, uninstall, auth, token,
         gunicorn_config, logging_conf):
     setting = AppSetting(port=port, global_dir=global_dir, data_dir=data_dir, config_dir=config_dir,
                          artifact_dir=artifact_dir, prod=prod, device_type=device_type, auth=auth)
-
+    if not os.path.isdir(RUBIX_REGISTRY_DIR):
+        os.mkdir(RUBIX_REGISTRY_DIR)
+    if token:
+        put_github_info(GitHubInfoModel(token=token))
     put_bios_info(BiosInfoModel(port=setting.port))
 
     if install:
