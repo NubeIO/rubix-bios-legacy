@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "rubix-bios"
-version = "1.4.1"
+version = "1.5.0"
 description = "BIOS comes with default OS, non-upgradable"
 authors = ["NubeIO"]
 
