@@ -33,6 +33,8 @@ class ServicesResource(Resource):
             app_model.upgrade_app_state = UpgradeModel().get_app_state().name
             app_model.date_since = status.get('date_since', '')
             app_model.time_since = status.get('time_since', '')
+            github_token: str = get_github_token()
+            app_model.token = f"{github_token[:4]}***{github_token[-4:]}"
         return app_model.to_dict()
 
 
@@ -92,13 +94,13 @@ class UploadUpgradeResource(Resource):
             abort(501, message=str(e))
 
 
-class SelfUpgradeResource(Resource):
+class UpgradeAndCheckResource(Resource):
     @classmethod
     def put(cls):
         app_state: AppState = UpgradeModel.get_app_state()
         try:
             if app_state != AppState.FINISHED:
-                raise PreConditionException(f"Upgrade app service is already {app_state.name}")
+                raise PreConditionException(f"Upgrade & Check app service is already {app_state.name}")
             token: str = get_github_token()
             _version = get_latest_release(get_release_link(REPO_NAME), token)
             installed_version: str = get_installed_app_version()

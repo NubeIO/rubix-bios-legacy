@@ -20,6 +20,7 @@ class AppModel(BaseSetting):
         self.upgrade_app_state = AppState.FINISHED.name
         self.date_since = ""
         self.time_since = ""
+        self.token = ""
 
 
 class UpgradeModel:
