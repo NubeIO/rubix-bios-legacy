@@ -1,4 +1,7 @@
 # CHANGELOG
+## [v1.5.1](https://github.com/NubeIO/rubix-bios/tree/v1.5.1) (2020-06-30)
+- Block background check iteration on blocked state
+
 ## [v1.5.0](https://github.com/NubeIO/rubix-bios/tree/v1.5.0) (2020-06-24)
 - Use registry for GitHub token
 - Add Gunicorn, gevent for running the app

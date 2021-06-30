@@ -10,7 +10,8 @@ from src.system.utils.file import write_file, read_file
 class AppState(enum.Enum):
     STARTED = 1
     RUNNING = 2
-    FINISHED = 3
+    BLOCKED = 3
+    FINISHED = 4
 
 
 class AppModel(BaseSetting):

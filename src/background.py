@@ -21,8 +21,10 @@ logger = logging.getLogger(__name__)
 REITERATION_TIME_SEC: int = 20
 RE_DOWNLOAD_TIME_SEC: int = 300
 WAIT_AFTER_RESTART: int = 60
+MAX_BLOCKED_ITERATION: int = 60
 
 download_start_time: Union[float, None] = None
+blocked_iteration_count: int = 0
 
 
 class Background:
@@ -44,8 +46,17 @@ def check_and_upgrade_app(app_context):
 
 @exception_handler
 def check_and_upgrade_app_loop():
-    token: str = get_github_token()
+    global blocked_iteration_count
     app_state: AppState = UpgradeModel.get_app_state()
+    if app_state == AppState.BLOCKED:
+        if blocked_iteration_count >= MAX_BLOCKED_ITERATION:
+            logger.info(f"We did {blocked_iteration_count} iterations and it's still blocked, so unblocking it!")
+            UpgradeModel.update_app_state(AppState.FINISHED)
+        logger.info(f"App state is blocked, count={blocked_iteration_count}!")
+        blocked_iteration_count += 1
+        return
+    token: str = get_github_token()
+    blocked_iteration_count = 0
     if app_state == AppState.STARTED:
         logger.info(f'App upgrade state: {app_state.name}')
         version: str = get_latest_release(get_release_link(REPO_NAME), token)

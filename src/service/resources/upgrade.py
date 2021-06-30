@@ -47,6 +47,7 @@ class UpgradeResource(Resource):
         _version = args['version']
         app_setting: AppSetting = current_app.config[AppSetting.FLASK_KEY]
         try:
+            UpgradeModel.update_app_state(AppState.BLOCKED)
             token: str = get_github_token()
             if _version == "latest":
                 _version = get_latest_release(get_release_link(REPO_NAME), token)
@@ -62,6 +63,8 @@ class UpgradeResource(Resource):
             abort(400, message=str(e))
         except Exception as e:
             abort(501, message=str(e))
+        finally:
+            UpgradeModel.update_app_state(AppState.FINISHED)
 
 
 class UploadUpgradeResource(Resource):
@@ -74,6 +77,7 @@ class UploadUpgradeResource(Resource):
         _version = args['version']
         file = args['file']
         try:
+            UpgradeModel.update_app_state(AppState.BLOCKED)
             if file.filename.split('.')[-1] != 'zip':
                 raise ValueError(f'File must be in zip format')
             match: bool = Version._regex.search(_version)
@@ -92,6 +96,8 @@ class UploadUpgradeResource(Resource):
             abort(400, message=str(e))
         except Exception as e:
             abort(501, message=str(e))
+        finally:
+            UpgradeModel.update_app_state(AppState.FINISHED)
 
 
 class UpgradeAndCheckResource(Resource):
