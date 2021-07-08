@@ -1,6 +1,6 @@
 from flask_restful import reqparse, Resource, abort
 
-from src.restart_registry import RestartRegistry
+from src.service.models.model_upgrade import UpgradeModel, AppState
 from src.utils.shell import execute_command_with_exception
 from src.utils.utils import validate_and_create_action, create_service_cmd
 
@@ -16,10 +16,12 @@ class ServiceControl(Resource):
         args = parser.parse_args()
         action: str = validate_and_create_action(args['action'])
         if action == 'restart':
-            RestartRegistry().set_restart_state(True)
+            UpgradeModel.update_app_state(AppState.BLOCKED)
         service_cmd: str = create_service_cmd(action, 'nubeio-rubix-service.service')
         try:
             execute_command_with_exception(service_cmd)
         except Exception as e:
             abort(500, message=str(e))
+        finally:
+            UpgradeModel.update_app_state(AppState.FINISHED)
         return {}

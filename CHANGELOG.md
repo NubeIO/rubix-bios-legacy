@@ -1,4 +1,7 @@
 # CHANGELOG
+## [v1.5.2](https://github.com/NubeIO/rubix-bios/tree/v1.5.2) (2020-07-09)
+- Improvement on restart command
+
 ## [v1.5.1](https://github.com/NubeIO/rubix-bios/tree/v1.5.1) (2020-06-30)
 - Block background check iteration on blocked state
 
