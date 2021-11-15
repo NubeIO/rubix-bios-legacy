@@ -32,15 +32,15 @@ class Systemd(ABC):
         os.symlink(self.__service_file, self.__symlink_service_file)
 
         print('Hitting daemon-reload...')
-        if not execute_command('sudo systemctl daemon-reload'):
+        if not execute_command('systemctl daemon-reload'):
             return False
 
         print('Enabling Linux Service...')
-        if not execute_command('sudo systemctl enable {}'.format(self.__service_file_name)):
+        if not execute_command('systemctl enable {}'.format(self.__service_file_name)):
             return False
 
         print('Starting Linux Service...')
-        if not execute_command('sudo systemctl restart {}'.format(self.__service_file_name)):
+        if not execute_command('systemctl restart {}'.format(self.__service_file_name)):
             return False
 
         print('Successfully started service')
