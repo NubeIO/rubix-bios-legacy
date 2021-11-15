@@ -43,5 +43,6 @@ USER rubix:nubeio
 VOLUME $GLOBAL_DATA
 
 EXPOSE 1615
+EXPOSE 1616
 
 ENTRYPOINT [ "./rubix-bios" ]
