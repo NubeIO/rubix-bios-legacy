@@ -1,4 +1,8 @@
 # CHANGELOG
+
+## [v1.5.3](https://github.com/NubeIO/rubix-bios/tree/v1.5.3) (2021-11-15)
+- Expose port 1616 and 1414
+
 ## [v1.5.2](https://github.com/NubeIO/rubix-bios/tree/v1.5.2) (2020-07-09)
 - Improvement on restart command
 
