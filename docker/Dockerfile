@@ -37,18 +37,20 @@ WORKDIR /usr/src/app/
 COPY --from=build /usr/src/app/dist/rubix-bios ./
 VOLUME $GLOBAL_DATA
 
-EXPOSE 1414 1615 1616
+ENV GITHUB_TOKEN="github_token"
 
 COPY docker/startup.sh ./
 
 RUN chmod +x ./startup.sh
 
-RUN yum update -y \
-    && yum install glibc-langpack-en -y
+RUN curl -sL https://rpm.nodesource.com/setup_10.x | bash -
 
-ENV GITHUB_TOKEN="github_token"
+RUN yum update -y \
+    && yum install nodejs glibc-langpack-en -y
 
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
+
+EXPOSE 1414 1615 1616
 
 CMD ["./startup.sh", "$GITHUB_TOKEN"]
