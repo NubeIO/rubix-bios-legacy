@@ -112,10 +112,8 @@ jobs:
           file: docker/Dockerfile
           platforms: ${{ env.PLATFORMS }}
           build-args: |
-            BASE_IMAGE_VERSION=3.9
             APP_VERSION=${{ needs.context.outputs.version }}
             COMMIT_SHA=${{ needs.context.outputs.sha }}
-            GITHUB_TOKEN=${{ secrets.NUBEIO_CI_GITHUBPROJECT_TOKEN }}
           cache-from: type=registry,ref=localhost:5000/${{ env.APP_NAME }}:buildcache
           cache-to: type=registry,ref=localhost:5000/${{ env.APP_NAME }}:buildcache,mode=max
           tags: localhost:5000/${{ env.APP_NAME }}:${{ needs.context.outputs.sha }}
@@ -153,7 +151,6 @@ jobs:
           file: docker/Dockerfile
           platforms: ${{ env.PLATFORMS }}
           build-args: |
-            BASE_IMAGE_VERSION=3.9
             APP_VERSION=${{ needs.context.outputs.version }}
             COMMIT_SHA=${{ needs.context.outputs.sha }}
           cache-from: type=registry,ref=localhost:5000/${{ env.APP_NAME }}:buildcache

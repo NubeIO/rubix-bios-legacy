@@ -1,5 +1,4 @@
-ARG BASE_IMAGE_VERSION
-FROM centos:latest as build
+FROM centos:centos7 as build
 
 RUN yum update -y \
     && yum install python3 git curl gcc -y \
@@ -18,7 +17,7 @@ RUN $HOME/.poetry/bin/poetry run pyinstaller run.py -n rubix-bios --clean --onef
     --add-data config:config \
     --add-data systemd:systemd
 
-FROM centos:latest
+FROM centos:centos7
 
 ARG MAINTAINER="zero88 <sontt246@gmail.com>"
 ARG APP_VERSION="1.0.0"
