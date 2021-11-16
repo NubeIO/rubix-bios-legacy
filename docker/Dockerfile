@@ -1,8 +1,9 @@
-FROM centos:centos7 as build
+ARG BASE_IMAGE_VERSION
+FROM python:$BASE_IMAGE_VERSION-slim as build
 
-RUN yum update -y \
-    && yum install python3 git curl gcc -y \
-    && curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python3
+RUN apt update -qq \
+    && apt install git curl gcc g++ make file musl-dev libffi-dev zlib1g zlib1g-dev -y \
+    && curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
 
 WORKDIR /usr/src/app/
 ADD poetry.lock pyproject.toml ./
@@ -17,7 +18,7 @@ RUN $HOME/.poetry/bin/poetry run pyinstaller run.py -n rubix-bios --clean --onef
     --add-data config:config \
     --add-data systemd:systemd
 
-FROM centos:centos7
+FROM python:$BASE_IMAGE_VERSION-slim
 
 ARG MAINTAINER="zero88 <sontt246@gmail.com>"
 ARG APP_VERSION="1.0.0"
@@ -35,21 +36,16 @@ RUN mkdir -p /etc/systemd/system/multi-user.target.wants \
 WORKDIR /usr/src/app/
 COPY --from=build /usr/src/app/dist/rubix-bios ./
 VOLUME $GLOBAL_DATA
-
 ENV GITHUB_TOKEN="github_token"
+
+RUN apt update -qq && apt install nodejs npm systemd systemd-sysv -y
+
+RUN ./rubix-bios -p 1615 -g ./data/rubix-bios -d data -c config -a apps --install --prod --auth --device-type amd64
 
 COPY docker/startup.sh ./
 
 RUN chmod +x ./startup.sh
 
-RUN curl -sL https://rpm.nodesource.com/setup_10.x | bash -
-
-RUN yum update -y \
-    && yum install nodejs glibc-langpack-en -y
-
-ENV LC_ALL=C.UTF-8
-ENV LANG=C.UTF-8
-
-EXPOSE 1414 1615 1616
+EXPOSE 1313 1414 1615 1616
 
 CMD ["./startup.sh", "$GITHUB_TOKEN"]
