@@ -1,9 +1,9 @@
 ARG BASE_IMAGE_VERSION
-FROM python:$BASE_IMAGE_VERSION-slim as build
+FROM centos:latest as build
 
-RUN apt update -qq \
-    && apt install git curl gcc g++ make file musl-dev libffi-dev zlib1g zlib1g-dev -y \
-    && curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
+RUN yum update -y \
+    && yum install python3 git curl gcc -y \
+    && curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python3
 
 WORKDIR /usr/src/app/
 ADD poetry.lock pyproject.toml ./
@@ -18,7 +18,7 @@ RUN $HOME/.poetry/bin/poetry run pyinstaller run.py -n rubix-bios --clean --onef
     --add-data config:config \
     --add-data systemd:systemd
 
-FROM python:$BASE_IMAGE_VERSION-slim
+FROM centos:latest
 
 ARG MAINTAINER="zero88 <sontt246@gmail.com>"
 ARG APP_VERSION="1.0.0"
@@ -35,11 +35,6 @@ RUN mkdir -p /etc/systemd/system/multi-user.target.wants \
 
 WORKDIR /usr/src/app/
 COPY --from=build /usr/src/app/dist/rubix-bios ./
-
-USER root:root
-
-RUN apt update -qq && apt install init -y
-
 VOLUME $GLOBAL_DATA
 
 EXPOSE 1414 1615 1616
@@ -48,6 +43,12 @@ COPY docker/startup.sh ./
 
 RUN chmod +x ./startup.sh
 
+RUN yum update -y \
+    && yum install glibc-langpack-en -y
+
 ENV GITHUB_TOKEN="github_token"
+
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
 
 CMD ["./startup.sh", "$GITHUB_TOKEN"]
