@@ -1,4 +1,5 @@
 #!/bin/bash
 
-setsid ./rubix-bios -p 1615 -g /data/rubix-bios -d data -c config -a apps --prod --auth --device-type amd64 --token $(eval echo "$@") &
-exec /usr/sbin/init
+mkdir -p /data/rubix-registry
+echo {\"_default\": {\"1\": {\"token\": \"$(eval echo "$@")\"}}} > /data/rubix-registry/github_info.json
+exec /sbin/init
