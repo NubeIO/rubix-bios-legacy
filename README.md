@@ -54,6 +54,8 @@ Options:
 
 ### How To Install:
 
+[See here for dockerized install](docker/README.md)
+
 Download appropriate rubix-bios file from the [GitHub Release](https://github.com/NubeIO/rubix-bios/releases) & extract 
 it, then run following command to start from systemd file:
 
@@ -83,8 +85,7 @@ it, then run following command to start from systemd file:
     ```   
 - To Run on Ubuntu with auth restriction and GitHub token: 
     ```bash
-    sudo ./rubix-bios -p 1615 -g /data/rubix-bios -d data -c config -a apps --prod --install --auth \
-    --device-type amd64 --token <token>
+    sudo ./rubix-bios -p 1615 -g /data/rubix-bios -d data -c config -a apps --prod --install --auth  --device-type amd64 --token <token>
     ```   
 
 _**Note:** if bios installed with --auth, services will also open with same auth protection_

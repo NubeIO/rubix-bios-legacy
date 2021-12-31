@@ -21,7 +21,7 @@ def validate_and_create_action(action) -> str:
 
 
 def create_service_cmd(action, service_file_name) -> str:
-    return f"sudo systemctl {action} {service_file_name}".strip()
+    return f"systemctl {action} {service_file_name}".strip()
 
 
 def get_github_token() -> str:
