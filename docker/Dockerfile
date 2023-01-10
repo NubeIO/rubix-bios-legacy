@@ -52,10 +52,12 @@ RUN apt update -qq && apt install nodejs npm systemd systemd-sysv -y
 
 RUN ./rubix-bios -p 1615 -g ./data/rubix-bios -d data -c config -a apps --install --prod --auth --device-type amd64
 
+COPY artifacts/rubix-edge-bios ./
+
+RUN ./rubix-edge-bios install --arch=amd64
+
 COPY docker/startup.sh ./
 
 RUN chmod +x ./startup.sh
-
-EXPOSE 1313 1414 1615 1616
 
 CMD ["./startup.sh", "$GITHUB_TOKEN"]
