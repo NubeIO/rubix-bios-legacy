@@ -56,7 +56,7 @@ RUN ./rubix-bios -p 1615 -g ./data/rubix-bios -d data -c config -a apps --instal
 
 COPY artifacts/rubix-edge-bios ./
 
-RUN ./rubix-edge-bios install --arch=amd64
+RUN ./rubix-edge-bios install --arch=amd64 || echo "Ignore it for armv7"
 
 COPY docker/startup.sh ./
 
