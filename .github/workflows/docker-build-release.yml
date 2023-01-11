@@ -83,7 +83,7 @@ jobs:
 
       - name: Validate cache
         run: |
-          docker buildx imagetools inspect localhost:5000/${{ env.APP_NAME }}:buildcache || echo "Not Found"
+          docker buildx imagetools inspect localhost:5000/${{ env.APP_NAME }}:buildcache || echo "Inspection not working"
 
       - name: Docker meta
         id: docker_meta

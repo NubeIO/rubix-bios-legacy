@@ -1,5 +1,11 @@
 # CHANGELOG
+## [v1.6.0](https://github.com/NubeIO/rubix-bios/tree/v1.6.0) (2023-01-10)
+### For k8s
+- Fix: pyintaller upgrade for build failure
+- Add rubix-edge-bios so it start with those two default BIOS
+
 ## [v1.5.3](https://github.com/NubeIO/rubix-bios/tree/v1.5.3) (2021-11-15)
+### For k8s
 - Docker image build improvement
 
 ## [v1.5.2](https://github.com/NubeIO/rubix-bios/tree/v1.5.2) (2020-07-09)
