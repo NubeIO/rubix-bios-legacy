@@ -1,4 +1,8 @@
 # CHANGELOG
+## [v1.7.0](https://github.com/NubeIO/rubix-bios/tree/v1.7.0) (2023-01-13)
+### For k8s
+- CRON backup `/lib/system/system/nubeio-*` to `/data/system/system/`
+
 ## [v1.6.0](https://github.com/NubeIO/rubix-bios/tree/v1.6.0) (2023-01-10)
 ### For k8s
 - Fix: pyintaller upgrade for build failure
