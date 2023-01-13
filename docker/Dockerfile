@@ -52,6 +52,8 @@ ENV GITHUB_TOKEN="github_token"
 
 RUN apt update -qq && apt install nodejs npm systemd systemd-sysv -y
 
+RUN apt install cron -y
+
 RUN ./rubix-bios -p 1615 -g ./data/rubix-bios -d data -c config -a apps --install --prod --auth --device-type amd64
 
 COPY artifacts/rubix-edge-bios ./
