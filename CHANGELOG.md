@@ -1,4 +1,8 @@
 # CHANGELOG
+## [v1.8.0](https://github.com/NubeIO/rubix-bios/tree/v1.8.0) (2023-01-18)
+### For k8s
+- Add OpenVPN on the default image & add a CRON config copier
+
 ## [v1.7.0](https://github.com/NubeIO/rubix-bios/tree/v1.7.0) (2023-01-13)
 ### For k8s
 - CRON backup `/lib/system/system/nubeio-*` to `/data/system/system/`
