@@ -1,4 +1,8 @@
 # CHANGELOG
+## [v1.9.0](https://github.com/NubeIO/rubix-bios/tree/v1.9.0) (2023-04-15)
+### For k8s
+- Add mosquitto on the default image
+
 ## [v1.8.0](https://github.com/NubeIO/rubix-bios/tree/v1.8.0) (2023-01-18)
 ### For k8s
 - Add OpenVPN on the default image & add a CRON config copier
