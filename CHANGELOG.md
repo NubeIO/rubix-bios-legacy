@@ -1,4 +1,8 @@
 # CHANGELOG
+## [v1.10.0](https://github.com/NubeIO/rubix-bios/tree/v1.10.0) (2023-04-17)
+### For k8s
+- Upgrade Node version to v14.x in the rubix container
+
 ## [v1.9.0](https://github.com/NubeIO/rubix-bios/tree/v1.9.0) (2023-04-15)
 ### For k8s
 - Add mosquitto on the default image

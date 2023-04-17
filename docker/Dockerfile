@@ -50,8 +50,15 @@ COPY --from=build /usr/src/app/dist/rubix-bios ./
 VOLUME $GLOBAL_DATA
 ENV GITHUB_TOKEN="github_token"
 
-RUN apt update -qq && apt install nodejs npm systemd systemd-sysv -y
+RUN apt update
+RUN apt install npm -y
 
+RUN apt install curl -y
+RUN curl -sL https://deb.nodesource.com/setup_14.x -o /tmp/nodesource_setup.sh
+RUN bash /tmp/nodesource_setup.sh
+RUN apt install nodejs -y
+
+RUN apt install systemd systemd-sysv -y
 RUN apt install cron -y
 RUN apt install openvpn -y
 RUN apt install mosquitto -y
