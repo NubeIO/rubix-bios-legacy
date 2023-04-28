@@ -1,4 +1,8 @@
 # CHANGELOG
+## [v1.11.0](https://github.com/NubeIO/rubix-bios/tree/v1.11.0) (2023-04-28)
+### For k8s
+- Upgrade rubix-edge-bios version to v1.2.0 for rubix-assist proxy
+
 ## [v1.10.0](https://github.com/NubeIO/rubix-bios/tree/v1.10.0) (2023-04-17)
 ### For k8s
 - Upgrade Node version to v14.x in the rubix container
