@@ -29,8 +29,8 @@ CLI_CTX_SETTINGS = dict(help_option_names=["-h", "--help"], max_content_width=12
 @click.option('--prod', is_flag=True, help='Production mode')
 @click.option('--device-type', type=click.Choice(['amd64', 'arm64', 'armv7']), default='armv7', show_default=True,
               help='Device type')
-@click.option('--install', is_flag=True, help='Install rubix-bios')
-@click.option('--uninstall', is_flag=True, help='Uninstall rubix-bios')
+@click.option('--install', is_flag=True, help='Install rubix-bios-legacy')
+@click.option('--uninstall', is_flag=True, help='Uninstall rubix-bios-legacy')
 @click.option('--auth', is_flag=True, help='Enable JWT authentication')
 @click.option('-t', '--token', help='GitHub token')
 @click.option('--gunicorn-config', help='Gunicorn: config file(gunicorn.conf.py)')
