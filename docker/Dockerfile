@@ -65,9 +65,9 @@ RUN apt install mosquitto -y
 
 RUN ./rubix-bios-legacy -p 1615 -g ./data/rubix-bios-legacy -d data -c config -a apps --install --prod --auth --device-type amd64
 
-COPY artifacts/rubix-edge-bios ./
+COPY artifacts/rubix-bios ./
 
-RUN ./rubix-edge-bios install --arch=amd64 || echo "Ignore it for armv7"
+RUN ./rubix-bios install --arch=amd64 || echo "Ignore it for armv7"
 
 COPY docker/startup.sh ./
 

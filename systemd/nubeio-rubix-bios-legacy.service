@@ -1,0 +1,17 @@
+[Unit]
+Description=BIOS comes with default OS, non-upgradable
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=<working_dir>
+ExecStart=<working_dir>/rubix-bios-legacy -p 1615 -g /data/rubix-bios-legacy -d data -c config -a apps --device-type <device_type> --prod --auth
+Restart=always
+RestartSec=10
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=rubix-bios-legacy
+
+[Install]
+WantedBy=multi-user.target
