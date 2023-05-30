@@ -1,4 +1,8 @@
 # CHANGELOG
+## [v1.12.0](https://github.com/NubeIO/rubix-bios-legacy/tree/v1.12.0) (2023-05-30)
+- Rename rubix-bios to rubix-bios-legacy
+- Remove old rubix-edge-bios artifacts & add new rubix-edge artifacts
+
 ## [v1.11.0](https://github.com/NubeIO/rubix-bios-legacy/tree/v1.11.0) (2023-04-28)
 ### For k8s
 - Upgrade rubix-edge-bios version to v1.2.0 for rubix-assist proxy
