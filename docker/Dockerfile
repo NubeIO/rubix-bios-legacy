@@ -24,7 +24,7 @@ ADD src src
 ADD config config
 ADD systemd systemd
 ADD run.py VERSION ./
-RUN $HOME/.poetry/bin/poetry run pyinstaller run.py -n rubix-bios --clean --onefile \
+RUN $HOME/.poetry/bin/poetry run pyinstaller run.py -n rubix-bios-legacy --clean --onefile \
     --add-data VERSION:. \
     --add-data config:config \
     --add-data systemd:systemd
@@ -46,7 +46,7 @@ RUN mkdir -p /etc/systemd/system/multi-user.target.wants \
     && mkdir -p $GLOBAL_DATA
 
 WORKDIR /usr/src/app/
-COPY --from=build /usr/src/app/dist/rubix-bios ./
+COPY --from=build /usr/src/app/dist/rubix-bios-legacy ./
 VOLUME $GLOBAL_DATA
 ENV GITHUB_TOKEN="github_token"
 
@@ -63,11 +63,11 @@ RUN apt install cron -y
 RUN apt install openvpn -y
 RUN apt install mosquitto -y
 
-RUN ./rubix-bios -p 1615 -g ./data/rubix-bios -d data -c config -a apps --install --prod --auth --device-type amd64
+RUN ./rubix-bios-legacy -p 1615 -g ./data/rubix-bios-legacy -d data -c config -a apps --install --prod --auth --device-type amd64
 
-COPY artifacts/rubix-edge-bios ./
+COPY artifacts/rubix-bios ./
 
-RUN ./rubix-edge-bios install --arch=amd64 || echo "Ignore it for armv7"
+RUN ./rubix-bios install --arch=amd64 || echo "Ignore it for armv7"
 
 COPY docker/startup.sh ./
 

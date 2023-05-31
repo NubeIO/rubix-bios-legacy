@@ -14,8 +14,8 @@ on:
       - 'v*'
 
 env:
-  APP_NAME: rubix-bios
-  GHCR_IMAGE: ghcr.io/nubeio/rubix-bios
+  APP_NAME: rubix-bios-legacy
+  GHCR_IMAGE: ghcr.io/nubeio/rubix-bios-legacy
   PLATFORMS: linux/amd64,linux/arm/v7
 
 jobs:

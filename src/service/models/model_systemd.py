@@ -72,7 +72,7 @@ class Systemd(ABC):
 
 
 class RubixBiosSystemd(Systemd):
-    SERVICE_FILE_NAME = 'nubeio-rubix-bios.service'
+    SERVICE_FILE_NAME = 'nubeio-rubix-bios-legacy.service'
 
     def __init__(self, wd: str = None, device_type: str = None, auth: bool = False):
         self.__wd = wd
@@ -83,7 +83,7 @@ class RubixBiosSystemd(Systemd):
     # noinspection DuplicatedCode
     def create_service(self):
         lines = []
-        with open(resource_path('systemd/nubeio-rubix-bios.service')) as systemd_file:
+        with open(resource_path('systemd/nubeio-rubix-bios-legacy.service')) as systemd_file:
             for line in systemd_file.readlines():
                 if '<working_dir>' in line and self.__wd:
                     line = line.replace('<working_dir>', self.__wd)

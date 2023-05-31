@@ -20,20 +20,20 @@ BIOS comes with default OS, non-upgradable
 - Build local binary
 
     ```bash
-    poetry run pyinstaller run.py -n rubix-bios --clean --onefile \
+    poetry run pyinstaller run.py -n rubix-bios-legacy --clean --onefile \
     --add-data VERSION:. \
     --add-data config:config \
     --add-data systemd:systemd
     ```
 
-  The output is: `dist/rubix-bios`
+  The output is: `dist/rubix-bios-legacy`
 
 ## Deploy on Production
 
 - Download release artifact
 - Review help and start
 ```bash
-./rubix-bios -h
+./rubix-bios-legacy -h
 
 Usage: run.py [OPTIONS]
 
@@ -46,8 +46,8 @@ Options:
   --prod                          Production mode
   --device-type [amd64|arm64|armv7]
                                   Device type  [default: armv7]
-  --install                       Install rubix-bios
-  --uninstall                     Uninstall rubix-bios
+  --install                       Install rubix-bios-legacy
+  --uninstall                     Uninstall rubix-bios-legacy
   --auth                          Enable JWT authentication
   -h, --help                      Show this message and exit.
 ```
@@ -56,36 +56,36 @@ Options:
 
 [See here for dockerized install](docker/README.md)
 
-Download appropriate rubix-bios file from the [GitHub Release](https://github.com/NubeIO/rubix-bios/releases) & extract 
+Download appropriate rubix-bios-legacy file from the [GitHub Release](https://github.com/NubeIO/rubix-bios-legacy/releases) & extract 
 it, then run following command to start from systemd file:
 
 - Template: 
     ```bash
-    sudo ./rubix-bios -p <port> -g <global_dir> -d <data_dir> -c <config_dir> -a <artifact_dir> --device-type <device_type> --prod --install
+    sudo ./rubix-bios-legacy -p <port> -g <global_dir> -d <data_dir> -c <config_dir> -a <artifact_dir> --device-type <device_type> --prod --install
     ```
 - Template2 (With JWT authorization): 
   ```bash
-  sudo ./rubix-bios -p <port> -g <global_dir> -d <data_dir> -c <config_dir> -a <artifact_dir> --device-type <device_type> --prod --install --auth
+  sudo ./rubix-bios-legacy -p <port> -g <global_dir> -d <data_dir> -c <config_dir> -a <artifact_dir> --device-type <device_type> --prod --install --auth
   ```
 - To Run on BBB & Pi: 
     ```bash
-    sudo ./rubix-bios -p 1615 -g /data/rubix-bios -d data -c config -a apps --prod --install
+    sudo ./rubix-bios-legacy -p 1615 -g /data/rubix-bios-legacy -d data -c config -a apps --prod --install
     ```
 - To Run on BBB & Pi with auth restriction: 
     ```bash
-    sudo ./rubix-bios -p 1615 -g /data/rubix-bios -d data -c config -a apps --prod --install --auth
+    sudo ./rubix-bios-legacy -p 1615 -g /data/rubix-bios-legacy -d data -c config -a apps --prod --install --auth
     ```  
 - To Run on Ubuntu: 
     ```bash
-    sudo ./rubix-bios -p 1615 -g /data/rubix-bios -d data -c config -a apps --prod --install --device-type amd64
+    sudo ./rubix-bios-legacy -p 1615 -g /data/rubix-bios-legacy -d data -c config -a apps --prod --install --device-type amd64
     ```    
 - To Run on Ubuntu with auth restriction: 
     ```bash
-    sudo ./rubix-bios -p 1615 -g /data/rubix-bios -d data -c config -a apps --prod --install --auth --device-type amd64
+    sudo ./rubix-bios-legacy -p 1615 -g /data/rubix-bios-legacy -d data -c config -a apps --prod --install --auth --device-type amd64
     ```   
 - To Run on Ubuntu with auth restriction and GitHub token: 
     ```bash
-    sudo ./rubix-bios -p 1615 -g /data/rubix-bios -d data -c config -a apps --prod --install --auth  --device-type amd64 --token <token>
+    sudo ./rubix-bios-legacy -p 1615 -g /data/rubix-bios-legacy -d data -c config -a apps --prod --install --auth  --device-type amd64 --token <token>
     ```   
 
 _**Note:** if bios installed with --auth, services will also open with same auth protection_
@@ -93,7 +93,7 @@ _**Note:** if bios installed with --auth, services will also open with same auth
 ### How To Uninstall:
 
 ```bash
-sudo ./rubix-bios --uninstall
+sudo ./rubix-bios-legacy --uninstall
 ```
 
 ### Authentication
