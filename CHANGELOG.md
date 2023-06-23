@@ -1,4 +1,7 @@
 # CHANGELOG
+## [v1.13.0](https://github.com/NubeIO/rubix-bios-legacy/tree/v1.13.0) (2023-06-23)
+- Upgrade rubix-bios to v1.4.0
+
 ## [v1.12.0](https://github.com/NubeIO/rubix-bios-legacy/tree/v1.12.0) (2023-05-30)
 - Rename rubix-bios to rubix-bios-legacy
 - Remove old rubix-edge-bios artifacts & add new rubix-edge artifacts
