@@ -1,4 +1,7 @@
 # CHANGELOG
+## [v1.14.0](https://github.com/NubeIO/rubix-bios-legacy/tree/v1.14.0) (2023-11-02)
+- Don't backup before it get copied from postStart of K8s backup
+
 ## [v1.13.0](https://github.com/NubeIO/rubix-bios-legacy/tree/v1.13.0) (2023-06-23)
 - Upgrade rubix-bios to v1.4.0
 
