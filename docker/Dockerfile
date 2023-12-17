@@ -62,6 +62,7 @@ RUN apt install systemd systemd-sysv -y
 RUN apt install cron -y
 RUN apt install openvpn -y
 RUN apt install mosquitto -y
+RUN touch /etc/default/locale
 
 RUN ./rubix-bios-legacy -p 1615 -g ./data/rubix-bios-legacy -d data -c config -a apps --install --prod --auth --device-type amd64
 
