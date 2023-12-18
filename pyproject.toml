@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "rubix-bios-legacy"
-version = "1.14.1"
+version = "1.15.0"
 description = "BIOS comes with default OS, non-upgradable"
 authors = ["NubeIO"]
 
