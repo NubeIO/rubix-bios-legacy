@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [v1.16.0](https://github.com/NubeIO/rubix-bios-legacy/tree/v1.16.0) (2023-02-06)
+
+- Add timezone in startup script
+
 ## [v1.15.0](https://github.com/NubeIO/rubix-bios-legacy/tree/v1.15.0) (2023-12-18)
 
 - Upgrade rubix-bios to v1.5.0
