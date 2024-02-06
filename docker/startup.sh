@@ -1,7 +1,14 @@
 #!/bin/bash
 
-# Set the timezone during container startup
-ln -snf /usr/share/zoneinfo/$TZ /etc/localtime
+TZ_FILE="/usr/share/zoneinfo/$TZ"
+LINK_DEST="/etc/localtime"
+
+if [ -z "$TZ" ]; then
+    ln -snf "$TZ_FILE" "$LINK_DEST"
+    echo "Timezone link created: $TZ_FILE -> $LINK_DEST"
+else
+    echo "Running on default timezone UTC"
+fi
 
 mkdir -p /data/rubix-registry
 echo "{\"_default\": {\"1\": {\"token\": \"$(eval echo "$@")\"}}}" > /data/rubix-registry/github_info.json
