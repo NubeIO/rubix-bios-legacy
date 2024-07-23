@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [v1.17.0](https://github.com/NubeIO/rubix-bios-legacy/tree/v1.17.0) (2024-07-23)
+
+- Fix: OpenVPN config copy
+
 ## [v1.16.0](https://github.com/NubeIO/rubix-bios-legacy/tree/v1.16.0) (2023-02-06)
 
 - Add timezone in startup script
